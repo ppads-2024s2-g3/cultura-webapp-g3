@@ -1,4 +1,4 @@
-package br.mackenzie.webapp; // Certifique-se de que a classe está aqui ou em um pacote pai
+package com.project.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

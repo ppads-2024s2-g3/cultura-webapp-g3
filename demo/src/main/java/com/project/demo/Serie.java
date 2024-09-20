@@ -1,4 +1,4 @@
-package br.mackenzie.webapp.serie;
+package com.project.demo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
