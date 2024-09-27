@@ -1,4 +1,4 @@
-package com.project.demo.controller;
+package com.project.demo;
 
 import java.util.Optional;
 
@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import com.project.demo.entidade.DesenhoAnimado;
-import com.project.demo.repository.DesenhoAnimadoRepo;
 
 @RestController
 class DesenhoAnimadoController {
