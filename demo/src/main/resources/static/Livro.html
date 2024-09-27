@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Livros</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+
+<body>
+    <h1>Gerenciamento de Livros</h1>
+
+    <table id="tabelaFormulario">    
+        <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
+        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
+        <tr> <td>Autor:</td> <td><input type="text" id="txtAutor"></td> </tr>
+        <tr> <td>Ano de Publicação:</td> <td><input type="number" id="txtAnoPublicacao"></td> </tr>
+        <tr> <td>Páginas:</td> <td><input type="number" id="txtPaginas"></td> </tr>
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
+        <tr> <td>Classificação Indicativa:</td> <td><input type="text" id="txtClassificacaoIndicativa"></td> </tr>
+        <tr><td></td><td>
+            <input type="button" value="Salvar" onclick="salvarLivro()" id="btnSalvar">
+            <input type="button" value="Apagar" onclick="apagarLivro()" id="btnApagar">
+            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+        </td></tr>
+    </table> 
+
+    <p style="font-weight:bold" id="paragrafoMensagem"></p>
+
+    <table id="tabelaLivros">  
+        <tr><td><input type="button" value="Novo" onclick="novoLivro()" id="btnNovo"></td> <td></td> <td></td></tr>
+        <tr> <th>ID</th> <th>Título</th> <th>Autor</th> <th>Ano</th> <th>Gênero</th> </tr>
+        <tbody id="corpoTabelaLivros"> </tbody>
+    </table>
+
+    <script src="rest.js"></script>
+    <script src="livros-rest.js"></script>
+    <script>
+        const tabelaLivros = document.querySelector('#tabelaLivros');
+        const tabelaFormulario = document.querySelector('#tabelaFormulario');
+        const corpoTabela = document.querySelector('#corpoTabelaLivros');
+        const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+        const txtId = document.querySelector('#txtId');
+        const txtTitulo = document.querySelector('#txtTitulo');
+        const txtAutor = document.querySelector('#txtAutor');
+        const txtAnoPublicacao = document.querySelector('#txtAnoPublicacao');
+        const txtPaginas = document.querySelector('#txtPaginas');
+        const txtGenero = document.querySelector('#txtGenero');
+        const txtClassificacaoIndicativa = document.querySelector('#txtClassificacaoIndicativa');
+
+        const btnNovo = document.querySelector('#btnNovo');
+        const btnSalvar = document.querySelector('#btnSalvar');
+        const btnApagar = document.querySelector('#btnApagar');
+        const btnCancelar = document.querySelector('#btnCancelar');
+        var criandoNovoLivro = false;
+
+        inicializar();
+
+        function inicializar() {
+            criandoNovoLivro = false;
+            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um livro da lista:';
+            txtId.value = '';
+            txtTitulo.value = '';
+            txtAutor.value = '';
+            txtAnoPublicacao.value = '';
+            txtPaginas.value = '';
+            txtGenero.value = '';
+            txtClassificacaoIndicativa.value = '';
+
+            txtId.disabled = true;
+            txtTitulo.disabled = true;
+            txtAutor.disabled = true;
+            txtAnoPublicacao.disabled = true;
+            txtPaginas.disabled = true;
+            txtGenero.disabled = true;
+            txtClassificacaoIndicativa.disabled = true;
+
+            btnNovo.disabled = false;
+            btnSalvar.disabled = true;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = true;
+
+            tabelaFormulario.style.display = 'none';
+            tabelaLivros.style.display = 'inline';
+
+            listarTodosLivros();
+        }
+
+        function listarTodosLivros() {
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = "Erro ao listar livros (código " + error.message + ")";
+            }
+            asyncLerLivros(preencherTabela, errorHandler);
+        }
+
+        function preencherTabela(livros) {
+            corpoTabela.innerHTML = "";
+            var n = livros.length;
+            for (var i = 0; i < n; i++) {
+                let l = livros[i];
+                let linha = corpoTabela.insertRow();
+                let celulaId = linha.insertCell();
+                let celulaTitulo = linha.insertCell();
+                let celulaAutor = linha.insertCell();
+                let celulaAno = linha.insertCell();
+                let celulaGenero = linha.insertCell();
+
+                let alink = document.createElement('a');
+                alink.textContent = l.id;
+                alink.href = "javascript:void(0)";
+                alink.onclick = function() { selecionarLivro(l.id); };
+                celulaId.appendChild(alink);
+                celulaTitulo.textContent = l.titulo;
+                celulaAutor.textContent = l.autor;
+                celulaAno.textContent = l.anoPublicacao;
+                celulaGenero.textContent = l.genero;
+            }
+        }
+
+        function selecionarLivro(id) {
+            criandoNovoLivro = false;
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = "Erro ao selecionar livro (código " + error.message + ")";
+            }
+            asyncLerLivroById(id, preencherFormulario, errorHandler);
+        }
+
+        function preencherFormulario(livro) {
+            paragrafoMensagem.textContent = 'Altere e salve os dados do livro, ou então apague o registro do livro.';
+            txtId.value = livro.id;
+            txtTitulo.value = livro.titulo;
+            txtAutor.value = livro.autor;
+            txtAnoPublicacao.value = livro.anoPublicacao;
+            txtPaginas.value = livro.paginas;
+            txtGenero.value = livro.genero;
+            txtClassificacaoIndicativa.value = livro.classificacaoIndicativa;
+
+            txtId.disabled = true;
+            txtTitulo.disabled = false;
+            txtAutor.disabled = false;
+            txtAnoPublicacao.disabled = false;
+            txtPaginas.disabled = false;
+            txtGenero.disabled = false;
+            txtClassificacaoIndicativa.disabled = false;
+
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = false;
+            btnCancelar.disabled = false;
+
+            tabelaFormulario.style.display = 'inline';
+            tabelaLivros.style.display = 'none';
+        }
+
+        function novoLivro() {
+            paragrafoMensagem.textContent = 'Preencha os dados do novo livro...';
+            criandoNovoLivro = true;
+
+            txtId.value = '';
+            txtTitulo.value = '';
+            txtAutor.value = '';
+            txtAnoPublicacao.value = '';
+            txtPaginas.value = '';
+            txtGenero.value = '';
+            txtClassificacaoIndicativa.value = '';
+
+            txtId.disabled = true;
+            txtTitulo.disabled = false;
+            txtAutor.disabled = false;
+            txtAnoPublicacao.disabled = false;
+            txtPaginas.disabled = false;
+            txtGenero.disabled = false;
+            txtClassificacaoIndicativa.disabled = false;
+
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = false;
+
+            tabelaFormulario.style.display = 'inline';
+            tabelaLivros.style.display = 'none';
+        }
+
+        function salvarLivro() {
+            if (criandoNovoLivro) {
+                criarLivro();
+            } else {
+                alterarLivro();
+            }
+        }
+
+        function criarLivro() {
+            const dadosLivro = {
+                'titulo': txtTitulo.value,
+                'autor': txtAutor.value,
+                'anoPublicacao': parseInt(txtAnoPublicacao.value),
+                'paginas': parseInt(txtPaginas.value),
+                'genero': txtGenero.value,
+                'classificacaoIndicativa': txtClassificacaoIndicativa.value
+            };
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao criar novo livro (código ' + error.message + ')';
+            }
+            asyncCriarLivro(dadosLivro, inicializar, errorHandler);
+        }
+
+        function alterarLivro() {
+            const dadosLivro = {
+                'id': txtId.value,
+                'titulo': txtTitulo.value,
+                'autor': txtAutor.value,
+                'anoPublicacao': parseInt(txtAnoPublicacao.value),
+                'paginas': parseInt(txtPaginas.value),
+                'genero': txtGenero.value,
+                'classificacaoIndicativa': txtClassificacaoIndicativa.value
+            };
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao alterar livro (código ' + error.message + ')';
+            }
+            asyncAlterarLivro(dadosLivro, inicializar, errorHandler);
+        }
+
+        function cancelarEdicao() {
+            inicializar();
+        }
+
+        function apagarLivro() {
+            const id = txtId.value;
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = "Erro ao apagar livro (código " + error.message + ")";
+            }
+            asyncApagarLivro(id, inicializar, errorHandler);
+        }
+    </script>
+
+</body>
+
+</html>
