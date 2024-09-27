@@ -14,13 +14,13 @@
         <tr> <td>ID:</td> <td><input type="text" id="txtId" disabled></td> </tr>
         <tr> <td>Nome:</td> <td><input type="text" id="txtNome"></td> </tr>
         <tr> <td>Criador:</td> <td><input type="text" id="txtCriador"></td> </tr>
-        <tr> <td>Ano de Lançamento:</td> <td><input type="text" id="txtAnoLancamento"></td> </tr> 
-        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
-        <tr> <td>Número de Temporadas:</td> <td><input type="text" id="txtNumeroTemporadas"></td> </tr>
-        <tr> <td>Número de Episódios:</td> <td><input type="text" id="txtNumeroEpisodios"></td> </tr>
+        <tr> <td>Ano de Lançamento:</td> <td><input type="number" id="txtAnoLancamento"></td> </tr> 
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr> 
+        <tr> <td>Número de Temporadas:</td> <td><input type="number" id="txtNumeroTemporadas"></td> </tr> 
+        <tr> <td>Número de Episódios:</td> <td><input type="number" id="txtNumeroEpisodios"></td> </tr>
         <tr><td></td><td>
-            <input type="button" value="Salvar" onclick="salvarDesenhoAnimado()" id="btnSalvar">
-            <input type="button" value="Apagar" onclick="apagarDesenhoAnimado()" id="btnApagar">
+            <input type="button" value="Salvar" onclick="salvarDesenho()" id="btnSalvar">
+            <input type="button" value="Apagar" onclick="apagarDesenho()" id="btnApagar">
             <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
         </td></tr>
     </table> 
@@ -28,12 +28,12 @@
     <p style="font-weight:bold" id="paragrafoMensagem"></p>
     
     <table id="tabelaDesenhos">  
-        <tr><td><input type="button" value="Novo" onclick="novoDesenhoAnimado()" id="btnNovo"></td> <td></td> <td></td></tr>
+        <tr><td><input type="button" value="Novo" onclick="novoDesenho()" id="btnNovo"></td> <td></td> <td></td></tr>
         <tr> <th>ID</th> <th>Nome</th> <th>Criador</th> <th>Ano de Lançamento</th> <th>Gênero</th> <th>Número de Temporadas</th> <th>Número de Episódios</th> </tr>
         <tbody id="corpoTabelaDesenhos"> </tbody>
     </table>
     
-    <script src="desenhos-rest.js"></script>
+    <script src="desenhoAnimado-rest.js"></script>
     <script>
         const tabelaDesenhos = document.querySelector('#tabelaDesenhos');
         const tabelaFormulario = document.querySelector('#tabelaFormulario');
@@ -57,7 +57,7 @@
 
         function inicializar() {
             criandoNovoDesenho = false;
-            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um desenho da lista:'
+            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um desenho animado da lista:'
             txtId.value = '';
             txtNome.value = '';
             txtCriador.value = '';
@@ -65,19 +65,20 @@
             txtGenero.value = '';
             txtNumeroTemporadas.value = '';
             txtNumeroEpisodios.value = '';
+            
             txtId.disabled = true;
-            txtNome.disabled = true;
-            txtCriador.disabled = true;
-            txtAnoLancamento.disabled = true;
-            txtGenero.disabled = true;
-            txtNumeroTemporadas.disabled = true;
-            txtNumeroEpisodios.disabled = true;
+            txtNome.disabled = false;
+            txtCriador.disabled = false;
+            txtAnoLancamento.disabled = false;
+            txtGenero.disabled = false;
+            txtNumeroTemporadas.disabled = false;
+            txtNumeroEpisodios.disabled = false;
             
             btnNovo.disabled = false;
             btnSalvar.disabled = true;
             btnApagar.disabled = true;
             btnCancelar.disabled = true;
-
+            
             tabelaFormulario.style.display = 'none';
             tabelaDesenhos.style.display = 'inline';
             
@@ -86,7 +87,7 @@
 
         function listarTodosDesenhos() {
             const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = "Erro ao listar desenhos (código " + error.message + ")";
+                paragrafoMensagem.textContent = "Erro ao listar desenhos animados (código " + error.message + ")";
             }
             asyncLerDesenhos(preencherTabela, errorHandler);
         }
@@ -108,7 +109,7 @@
                 let alink = document.createElement('a');
                 alink.textContent = d.id;
                 alink.href = "javascript:void(0)";
-                alink.onclick = function() { selecionarDesenho(d.id); };
+                alink.onclick =  function() { selecionarDesenho(d.id); };
                 celulaId.appendChild(alink);
                 celulaNome.textContent = d.nome;
                 celulaCriador.textContent = d.criador;
@@ -122,13 +123,13 @@
         function selecionarDesenho(id) {
             criandoNovoDesenho = false;
             const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = "Erro ao selecionar desenho (código " + error.message + ")";
+                paragrafoMensagem.textContent = "Erro ao selecionar desenho animado (código " + error.message + ")";
             }
             asyncLerDesenhoById(id, preencherFormulario, errorHandler);				
         }
-        
+            
         function preencherFormulario(desenho) {
-            paragrafoMensagem.textContent = 'Altere e salve os dados do desenho, ou então apague o registro.';
+            paragrafoMensagem.textContent = 'Altere e salve os dados do desenho animado, ou então apague o registro.';
             txtId.value = desenho.id;
             txtNome.value = desenho.nome;
             txtCriador.value = desenho.criador;
@@ -154,7 +155,7 @@
             tabelaDesenhos.style.display = 'none';
         }
 
-        function novoDesenhoAnimado() {
+        function novoDesenho() {
             paragrafoMensagem.textContent = 'Preencha os dados do novo desenho animado...';
             criandoNovoDesenho = true;
             
@@ -183,22 +184,22 @@
             tabelaDesenhos.style.display = 'none';
         }
         
-        function salvarDesenhoAnimado() {
+        function salvarDesenho() {
             if (criandoNovoDesenho) {
-                criarDesenhoAnimado();
+                criarDesenho();
             } else {
-                alterarDesenhoAnimado();
+                alterarDesenho();
             }
         }
         
-        function criarDesenhoAnimado() {
+        function criarDesenho() {
             const dadosDesenho = {
                 'nome': txtNome.value,
                 'criador': txtCriador.value,
-                'anoLancamento': txtAnoLancamento.value,
+                'anoLancamento': parseInt(txtAnoLancamento.value),
                 'genero': txtGenero.value,
-                'numeroTemporadas': txtNumeroTemporadas.value,
-                'numeroEpisodios': txtNumeroEpisodios.value
+                'numeroTemporadas': parseInt(txtNumeroTemporadas.value),
+                'numeroEpisodios': parseInt(txtNumeroEpisodios.value)
             };
             const errorHandler = function(error) { 
                 paragrafoMensagem.textContent = 'Erro ao criar novo desenho animado (código ' + error.message + ')'; 
@@ -206,18 +207,18 @@
             asyncCriarDesenho(dadosDesenho, inicializar, errorHandler);
         }
         
-        function alterarDesenhoAnimado() {
+        function alterarDesenho() {
             const errorHandler = function(error) {
                 paragrafoMensagem.textContent = 'Erro ao alterar desenho animado (código ' + error.message + ')'; 
             }
             const dadosDesenho = {
-                'id': txtId.value,
+                'id': parseInt(txtId.value),
                 'nome': txtNome.value,
                 'criador': txtCriador.value,
-                'anoLancamento': txtAnoLancamento.value,
+                'anoLancamento': parseInt(txtAnoLancamento.value),
                 'genero': txtGenero.value,
-                'numeroTemporadas': txtNumeroTemporadas.value,
-                'numeroEpisodios': txtNumeroEpisodios.value
+                'numeroTemporadas': parseInt(txtNumeroTemporadas.value),
+                'numeroEpisodios': parseInt(txtNumeroEpisodios.value)
             };
             asyncAlterarDesenho(dadosDesenho, inicializar, errorHandler);        	
         }
@@ -226,14 +227,13 @@
             inicializar();
         }
         
-        function apagarDesenhoAnimado() {
-            const id = txtId.value;
+        function apagarDesenho() {
+            const id = parseInt(txtId.value);
             const errorHandler = function(error) { 
                 paragrafoMensagem.textContent = 'Erro ao apagar desenho animado (código ' + error.message + ')'; 
             } 
             asyncApagarDesenho(id, inicializar, errorHandler);       		
         }
-        
     </script>    
 </body>
 
