@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gerenciamento de Desenhos Animados</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+
+<body>
+    <h1>Gerenciamento de Desenhos Animados</h1>
+
+    <table id="tabelaFormulario">    
+        <tr> <td>ID:</td> <td><input type="text" id="txtId" disabled></td> </tr>
+        <tr> <td>Nome:</td> <td><input type="text" id="txtNome"></td> </tr>
+        <tr> <td>Criador:</td> <td><input type="text" id="txtCriador"></td> </tr>
+        <tr> <td>Ano de Lançamento:</td> <td><input type="text" id="txtAnoLancamento"></td> </tr> 
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
+        <tr> <td>Número de Temporadas:</td> <td><input type="text" id="txtNumeroTemporadas"></td> </tr>
+        <tr> <td>Número de Episódios:</td> <td><input type="text" id="txtNumeroEpisodios"></td> </tr>
+        <tr><td></td><td>
+            <input type="button" value="Salvar" onclick="salvarDesenhoAnimado()" id="btnSalvar">
+            <input type="button" value="Apagar" onclick="apagarDesenhoAnimado()" id="btnApagar">
+            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+        </td></tr>
+    </table> 
+
+    <p style="font-weight:bold" id="paragrafoMensagem"></p>
+    
+    <table id="tabelaDesenhos">  
+        <tr><td><input type="button" value="Novo" onclick="novoDesenhoAnimado()" id="btnNovo"></td> <td></td> <td></td></tr>
+        <tr> <th>ID</th> <th>Nome</th> <th>Criador</th> <th>Ano de Lançamento</th> <th>Gênero</th> <th>Número de Temporadas</th> <th>Número de Episódios</th> </tr>
+        <tbody id="corpoTabelaDesenhos"> </tbody>
+    </table>
+    
+    <script src="desenhos-rest.js"></script>
+    <script>
+        const tabelaDesenhos = document.querySelector('#tabelaDesenhos');
+        const tabelaFormulario = document.querySelector('#tabelaFormulario');
+        const corpoTabela = document.querySelector('#corpoTabelaDesenhos');
+        const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+        const txtNome = document.querySelector('#txtNome');
+        const txtCriador = document.querySelector('#txtCriador');
+        const txtAnoLancamento = document.querySelector('#txtAnoLancamento');
+        const txtGenero = document.querySelector('#txtGenero');
+        const txtNumeroTemporadas = document.querySelector('#txtNumeroTemporadas');
+        const txtNumeroEpisodios = document.querySelector('#txtNumeroEpisodios');
+        const txtId = document.querySelector('#txtId');
+        
+        const btnNovo = document.querySelector('#btnNovo');
+        const btnSalvar = document.querySelector('#btnSalvar');
+        const btnApagar = document.querySelector('#btnApagar');
+        const btnCancelar = document.querySelector('#btnCancelar');
+        var criandoNovoDesenho = false;
+        
+        inicializar();
+
+        function inicializar() {
+            criandoNovoDesenho = false;
+            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um desenho da lista:'
+            txtId.value = '';
+            txtNome.value = '';
+            txtCriador.value = '';
+            txtAnoLancamento.value = '';
+            txtGenero.value = '';
+            txtNumeroTemporadas.value = '';
+            txtNumeroEpisodios.value = '';
+            txtId.disabled = true;
+            txtNome.disabled = true;
+            txtCriador.disabled = true;
+            txtAnoLancamento.disabled = true;
+            txtGenero.disabled = true;
+            txtNumeroTemporadas.disabled = true;
+            txtNumeroEpisodios.disabled = true;
+            
+            btnNovo.disabled = false;
+            btnSalvar.disabled = true;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = true;
+
+            tabelaFormulario.style.display = 'none';
+            tabelaDesenhos.style.display = 'inline';
+            
+            listarTodosDesenhos();            
+        }
+
+        function listarTodosDesenhos() {
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao listar desenhos (código " + error.message + ")";
+            }
+            asyncLerDesenhos(preencherTabela, errorHandler);
+        }
+        
+        function preencherTabela(desenhos) {
+            corpoTabela.innerHTML = "";
+            var n = desenhos.length;
+            for (var i = 0; i < n; i++) {
+                let d = desenhos[i];
+                let linha = corpoTabela.insertRow();
+                let celulaId = linha.insertCell();
+                let celulaNome = linha.insertCell();
+                let celulaCriador = linha.insertCell();
+                let celulaAnoLancamento = linha.insertCell();
+                let celulaGenero = linha.insertCell();
+                let celulaNumeroTemporadas = linha.insertCell();
+                let celulaNumeroEpisodios = linha.insertCell();
+                
+                let alink = document.createElement('a');
+                alink.textContent = d.id;
+                alink.href = "javascript:void(0)";
+                alink.onclick = function() { selecionarDesenho(d.id); };
+                celulaId.appendChild(alink);
+                celulaNome.textContent = d.nome;
+                celulaCriador.textContent = d.criador;
+                celulaAnoLancamento.textContent = d.anoLancamento;
+                celulaGenero.textContent = d.genero;
+                celulaNumeroTemporadas.textContent = d.numeroTemporadas;
+                celulaNumeroEpisodios.textContent = d.numeroEpisodios;
+            }
+        }
+        
+        function selecionarDesenho(id) {
+            criandoNovoDesenho = false;
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao selecionar desenho (código " + error.message + ")";
+            }
+            asyncLerDesenhoById(id, preencherFormulario, errorHandler);				
+        }
+        
+        function preencherFormulario(desenho) {
+            paragrafoMensagem.textContent = 'Altere e salve os dados do desenho, ou então apague o registro.';
+            txtId.value = desenho.id;
+            txtNome.value = desenho.nome;
+            txtCriador.value = desenho.criador;
+            txtAnoLancamento.value = desenho.anoLancamento;
+            txtGenero.value = desenho.genero;
+            txtNumeroTemporadas.value = desenho.numeroTemporadas;
+            txtNumeroEpisodios.value = desenho.numeroEpisodios;
+            
+            txtId.disabled = true;
+            txtNome.disabled = false;
+            txtCriador.disabled = false;
+            txtAnoLancamento.disabled = false;
+            txtGenero.disabled = false;
+            txtNumeroTemporadas.disabled = false;
+            txtNumeroEpisodios.disabled = false;
+            
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = false;
+            btnCancelar.disabled = false;  
+            
+            tabelaFormulario.style.display = 'inline';
+            tabelaDesenhos.style.display = 'none';
+        }
+
+        function novoDesenhoAnimado() {
+            paragrafoMensagem.textContent = 'Preencha os dados do novo desenho animado...';
+            criandoNovoDesenho = true;
+            
+            txtId.value = '';
+            txtNome.value = '';
+            txtCriador.value = '';
+            txtAnoLancamento.value = '';
+            txtGenero.value = '';
+            txtNumeroTemporadas.value = '';
+            txtNumeroEpisodios.value = '';
+            
+            txtId.disabled = true;
+            txtNome.disabled = false;
+            txtCriador.disabled = false;
+            txtAnoLancamento.disabled = false;
+            txtGenero.disabled = false;
+            txtNumeroTemporadas.disabled = false;
+            txtNumeroEpisodios.disabled = false;
+            
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = false;
+            
+            tabelaFormulario.style.display = 'inline';
+            tabelaDesenhos.style.display = 'none';
+        }
+        
+        function salvarDesenhoAnimado() {
+            if (criandoNovoDesenho) {
+                criarDesenhoAnimado();
+            } else {
+                alterarDesenhoAnimado();
+            }
+        }
+        
+        function criarDesenhoAnimado() {
+            const dadosDesenho = {
+                'nome': txtNome.value,
+                'criador': txtCriador.value,
+                'anoLancamento': txtAnoLancamento.value,
+                'genero': txtGenero.value,
+                'numeroTemporadas': txtNumeroTemporadas.value,
+                'numeroEpisodios': txtNumeroEpisodios.value
+            };
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = 'Erro ao criar novo desenho animado (código ' + error.message + ')'; 
+            }
+            asyncCriarDesenho(dadosDesenho, inicializar, errorHandler);
+        }
+        
+        function alterarDesenhoAnimado() {
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao alterar desenho animado (código ' + error.message + ')'; 
+            }
+            const dadosDesenho = {
+                'id': txtId.value,
+                'nome': txtNome.value,
+                'criador': txtCriador.value,
+                'anoLancamento': txtAnoLancamento.value,
+                'genero': txtGenero.value,
+                'numeroTemporadas': txtNumeroTemporadas.value,
+                'numeroEpisodios': txtNumeroEpisodios.value
+            };
+            asyncAlterarDesenho(dadosDesenho, inicializar, errorHandler);        	
+        }
+        
+        function cancelarEdicao() {
+            inicializar();
+        }
+        
+        function apagarDesenhoAnimado() {
+            const id = txtId.value;
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = 'Erro ao apagar desenho animado (código ' + error.message + ')'; 
+            } 
+            asyncApagarDesenho(id, inicializar, errorHandler);       		
+        }
+        
+    </script>    
+</body>
+
+</html>
