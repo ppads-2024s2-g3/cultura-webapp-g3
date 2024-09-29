@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Documentários</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+
+<body>
+    <h1>Gerenciamento de Documentários</h1>
+
+    <table id="tabelaFormulario">
+        <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
+        <tr> <td>Nome:</td> <td><input type="text" id="txtNome"></td> </tr>
+        <tr> <td>Diretor:</td> <td><input type="text" id="txtDiretor"></td> </tr>
+        <tr> <td>Ano de Lançamento:</td> <td><input type="text" id="txtAnoLancamento"></td> </tr>
+        <tr> <td>Duração (minutos):</td> <td><input type="text" id="txtDuracao"></td> </tr>
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
+        <tr> <td>Tema:</td> <td><input type="text" id="txtTema"></td> </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Salvar" onclick="salvarDocumentario()" id="btnSalvar">
+                <input type="button" value="Apagar" onclick="apagarDocumentario()" id="btnApagar">
+                <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+            </td>
+        </tr>
+    </table>
+
+    <p style="font-weight:bold" id="paragrafoMensagem"></p>
+
+    <table id="tabelaDocumentarios">
+        <tr>
+            <td><input type="button" value="Novo" onclick="novoDocumentario()" id="btnNovo"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Diretor</th>
+            <th>Ano de Lançamento</th>
+            <th>Duração</th>
+            <th>Gênero</th>
+            <th>Tema</th>
+        </tr>
+        <tbody id="corpoTabelaDocumentarios"> </tbody>
+    </table>
+
+    <script src="documentarios-rest.js"></script>
+    <script>
+        const tabelaDocumentarios = document.querySelector('#tabelaDocumentarios');
+        const tabelaFormulario = document.querySelector('#tabelaFormulario');
+        const corpoTabela = document.querySelector('#corpoTabelaDocumentarios');
+        const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+        const txtNome = document.querySelector('#txtNome');
+        const txtDiretor = document.querySelector('#txtDiretor');
+        const txtAnoLancamento = document.querySelector('#txtAnoLancamento');
+        const txtDuracao = document.querySelector('#txtDuracao');
+        const txtGenero = document.querySelector('#txtGenero');
+        const txtTema = document.querySelector('#txtTema');
+        const txtId = document.querySelector('#txtId');
+        
+        const btnNovo = document.querySelector('#btnNovo');
+        const btnSalvar = document.querySelector('#btnSalvar');
+        const btnApagar = document.querySelector('#btnApagar');
+        const btnCancelar = document.querySelector('#btnCancelar');
+        var criandoNovoDocumentario = false;
+
+        inicializar();
+
+        function inicializar() {
+            criandoNovoDocumentario = false;
+            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um documentário da lista:';
+            txtId.value = '';
+            txtNome.value = '';
+            txtDiretor.value = '';
+            txtAnoLancamento.value = '';
+            txtDuracao.value = '';
+            txtGenero.value = '';
+            txtTema.value = '';
+            txtId.disabled = true;
+            txtNome.disabled = true;
+            txtDiretor.disabled = true;
+            txtAnoLancamento.disabled = true;
+            txtDuracao.disabled = true;
+            txtGenero.disabled = true;
+            txtTema.disabled = true;
+
+            btnNovo.disabled = false;
+            btnSalvar.disabled = true;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = true;
+
+            tabelaFormulario.style.display = 'none';
+            tabelaDocumentarios.style.display = 'inline';
+
+            listarTodosDocumentarios();
+        }
+
+        function listarTodosDocumentarios() {
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = "Erro ao listar documentários (código " + error.message + ")";
+            }
+            asyncLerDocs(preencherTabela, errorHandler);
+        }
+
+        function preencherTabela(documentarios) {
+            corpoTabela.innerHTML = "";
+            var n = documentarios.length;
+            for (var i = 0; i < n; i++) {
+                let d = documentarios[i];
+                let linha = corpoTabela.insertRow();
+                let celulaId = linha.insertCell();
+                let celulaNome = linha.insertCell();
+                let celulaDiretor = linha.insertCell();
+                let celulaAno = linha.insertCell();
+                let celulaDuracao = linha.insertCell();
+                let celulaGenero = linha.insertCell();
+                let celulaTema = linha.insertCell();
+
+                let alink = document.createElement('a');
+                alink.textContent = d.id;
+                alink.href = "javascript:void(0)";
+                alink.onclick = function() { selecionarDocumentario(d.id); };
+                celulaId.appendChild(alink);
+                celulaNome.textContent = d.nome;
+                celulaDiretor.textContent = d.diretor;
+                celulaAno.textContent = d.anoLancamento;
+                celulaDuracao.textContent = d.duracaoMediaMinutos;
+                celulaGenero.textContent = d.genero;
+                celulaTema.textContent = d.tema;
+            }
+        }
+
+        function selecionarDocumentario(id) {
+            criandoNovoDocumentario = false;
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = "Erro ao selecionar documentário (código " + error.message + ")";
+            }
+            asyncLerDocById(id, preencherFormulario, errorHandler);
+        }
+
+        function preencherFormulario(documentario) {
+            paragrafoMensagem.textContent = 'Altere e salve os dados do documentário, ou então apague o registro.';
+            txtId.value = documentario.id;
+            txtNome.value = documentario.nome;
+            txtDiretor.value = documentario.diretor;
+            txtAnoLancamento.value = documentario.anoLancamento;
+            txtDuracao.value = documentario.duracaoMediaMinutos;
+            txtGenero.value = documentario.genero;
+            txtTema.value = documentario.tema;
+
+            txtId.disabled = true;
+            txtNome.disabled = false;
+            txtDiretor.disabled = false;
+            txtAnoLancamento.disabled = false;
+            txtDuracao.disabled = false;
+            txtGenero.disabled = false;
+            txtTema.disabled = false;
+
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = false;
+            btnCancelar.disabled = false;
+
+            tabelaFormulario.style.display = 'inline';
+            tabelaDocumentarios.style.display = 'none';
+        }
+
+        function novoDocumentario() {
+            paragrafoMensagem.textContent = 'Preencha os dados do novo documentário...';
+            criandoNovoDocumentario = true;
+
+            txtId.value = '';
+            txtNome.value = '';
+            txtDiretor.value = '';
+            txtAnoLancamento.value = '';
+            txtDuracao.value = '';
+            txtGenero.value = '';
+            txtTema.value = '';
+
+            txtId.disabled = true;
+            txtNome.disabled = false;
+            txtDiretor.disabled = false;
+            txtAnoLancamento.disabled = false;
+            txtDuracao.disabled = false;
+            txtGenero.disabled = false;
+            txtTema.disabled = false;
+
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = false;
+
+            tabelaFormulario.style.display = 'inline';
+            tabelaDocumentarios.style.display = 'none';
+        }
+
+        function salvarDocumentario() {
+            if (criandoNovoDocumentario) {
+                criarDocumentario();
+            } else {
+                alterarDocumentario();
+            }
+        }
+
+        function criarDocumentario() {
+            const dadosDocumentario = {
+                'nome': txtNome.value,
+                'diretor': txtDiretor.value,
+                'anoLancamento': txtAnoLancamento.value,
+                'duracaoMediaMinutos': txtDuracao.value,
+                'genero': txtGenero.value,
+                'tema': txtTema.value
+            };
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao criar novo documentário (código ' + error.message + ')';
+            }
+            asyncCriarDoc(dadosDocumentario, inicializar, errorHandler);
+        }
+
+        function alterarDocumentario() {
+            const dadosDocumentario = {
+                'id': txtId.value,
+                'nome': txtNome.value,
+                'diretor': txtDiretor.value,
+                'anoLancamento': txtAnoLancamento.value,
+                'duracaoMediaMinutos': txtDuracao.value,
+                'genero': txtGenero.value,
+                'tema': txtTema.value
+            };
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao alterar documentário (código ' + error.message + ')';
+            }
+            asyncAlterarDoc(dadosDocumentario, inicializar, errorHandler);
+        }
+
+        function cancelarEdicao() {
+            inicializar();
+        }
+
+        function apagarDocumentario() {
+            const id = txtId.value;
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao apagar documentário (código ' + error.message + ')';
+            }
+            asyncApagarDoc(id, inicializar, errorHandler);
+        }
+    </script>
+</body>
+
+</html>
