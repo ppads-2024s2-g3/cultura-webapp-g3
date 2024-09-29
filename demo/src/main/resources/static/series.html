@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gerenciamento de Séries</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+
+<body>
+    <h1>Gerenciamento de Séries</h1>
+
+    <table id="tabelaFormulario">    
+        <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
+        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
+        <tr> <td>Ano:</td> <td><input type="text" id="txtAno"></td> </tr> 
+        <tr><td></td><td>
+            <input type="button" value="Salvar" onclick="salvarSerie()" id="btnSalvar">
+            <input type="button" value="Apagar" onclick="apagarSerie()" id="btnApagar">
+            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+        </td></tr>
+    </table> 
+    
+    <p style="font-weight:bold" id="paragrafoMensagem"></p>
+    
+    <table id="tabelaSeries">  
+        <tr><td><input type="button" value="Novo" onclick="novaSerie()" id="btnNovo"></td> <td></td> <td></td></tr>
+        <tr> <th>ID</th> <th>Título</th> <th>Gênero</th> <th>Ano</th> </tr>
+        <tbody id="corpoTabelaSeries"> </tbody>
+    </table>
+    
+    <script src="series-rest.js"></script>
+    <script>
+        const tabelaSeries = document.querySelector('#tabelaSeries');
+        const tabelaFormulario = document.querySelector('#tabelaFormulario');
+        const corpoTabela = document.querySelector('#corpoTabelaSeries');
+        const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+        const txtTitulo = document.querySelector('#txtTitulo');
+        const txtGenero = document.querySelector('#txtGenero');
+        const txtAno = document.querySelector('#txtAno');
+        const txtId = document.querySelector('#txtId');
+        
+        const btnNovo = document.querySelector('#btnNovo');
+        const btnSalvar = document.querySelector('#btnSalvar');
+        const btnApagar = document.querySelector('#btnApagar');
+        const btnCancelar = document.querySelector('#btnCancelar');
+        var criandoNovaSerie = false;
+        
+        inicializar();
+
+        function inicializar() {
+            criandoNovaSerie = false;
+            paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione uma série da lista:';
+            txtId.value = '';
+            txtTitulo.value = '';
+            txtGenero.value = '';
+            txtAno.value = '';
+            txtId.disabled = true;
+            txtTitulo.disabled = true;
+            txtGenero.disabled = true;
+            txtAno.disabled = true;
+            
+            btnNovo.disabled = false;
+            btnSalvar.disabled = true;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = true;
+            
+            tabelaFormulario.style.display = 'none';
+            tabelaSeries.style.display = 'inline';
+            
+            listarTodasSeries();            
+        }
+
+        function listarTodasSeries() {
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao listar séries (código " + error.message + ")";
+            }
+            asyncLerSeries(preencherTabela, errorHandler);
+        }
+        
+        function preencherTabela(series) {
+            corpoTabela.innerHTML = "";
+            var n = series.length;
+            for (var i = 0; i < n; i++) {
+                let s = series[i];
+                let linha = corpoTabela.insertRow();
+                let celulaId = linha.insertCell();
+                let celulaTitulo = linha.insertCell();
+                let celulaGenero = linha.insertCell();
+                let celulaAno = linha.insertCell();
+                
+                let alink = document.createElement('a');
+                alink.textContent = s.id;
+                alink.href = "javascript:void(0)";
+                alink.onclick =  function() { selecionarSerie(s.id); };
+                celulaId.appendChild(alink);
+                celulaTitulo.textContent = s.titulo;
+                celulaGenero.textContent = s.genero;
+                celulaAno.textContent = s.ano;
+            }
+        }
+        
+        function selecionarSerie(id) {
+            criandoNovaSerie = false;
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao selecionar série (código " + error.message + ")";
+            }
+            asyncLerSerieById(id, preencherFormulario, errorHandler);				
+        }
+            
+        function preencherFormulario(serie) {
+            paragrafoMensagem.textContent = 'Altere e salve os dados da série, ou então apague o registro da série.';
+            txtId.value = serie.id;
+            txtTitulo.value = serie.titulo;
+            txtGenero.value = serie.genero;
+            txtAno.value = serie.ano;
+            
+            txtId.disabled = true;
+            txtTitulo.disabled = false;
+            txtGenero.disabled = false;
+            txtAno.disabled = false;
+            
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = false;
+            btnCancelar.disabled = false;  
+            
+            tabelaFormulario.style.display = 'inline';
+            tabelaSeries.style.display = 'none';
+        }
+
+        function novaSerie() {
+            paragrafoMensagem.textContent = 'Preencha os dados da nova série...';
+            criandoNovaSerie = true;
+            
+            txtId.value = '';
+            txtTitulo.value = '';
+            txtGenero.value = '';
+            txtAno.value = '';
+            
+            txtId.disabled = true;
+            txtTitulo.disabled = false;
+            txtGenero.disabled = false;
+            txtAno.disabled = false;
+            
+            btnNovo.disabled = true;
+            btnSalvar.disabled = false;
+            btnApagar.disabled = true;
+            btnCancelar.disabled = false;
+            
+            tabelaFormulario.style.display = 'inline';
+            tabelaSeries.style.display = 'none';
+        }
+        
+        function salvarSerie() {
+            if (criandoNovaSerie) {
+                criarSerie();
+            } else {
+                alterarSerie();
+            }
+        }
+        
+        function criarSerie() {
+            const dadosSerie = {
+                'titulo': txtTitulo.value,
+                'genero': txtGenero.value,
+                'ano': txtAno.value
+            };
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = 'Erro ao criar nova série (código ' + error.message + ')'; 
+            }
+            asyncCriarSerie(dadosSerie, inicializar, errorHandler);
+        }
+        
+        function alterarSerie() {
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao alterar série (código ' + error.message + ')'; 
+            }
+            const dadosSerie = {
+                'id': txtId.value,
+                'titulo': txtTitulo.value,
+                'genero': txtGenero.value,
+                'ano': txtAno.value
+            };
+            asyncAlterarSerie(dadosSerie, inicializar, errorHandler);        	
+        }
+        
+        function cancelarEdicao() {
+            inicializar();
+        }
+        
+        function apagarSerie() {
+            const id = txtId.value;
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = 'Erro ao apagar série (código ' + error.message + ')'; 
+            } 
+            asyncApagarSerie(id, inicializar, errorHandler);       		
+        }
+    </script>    
+</body>
+
+</html>
