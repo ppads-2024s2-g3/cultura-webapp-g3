@@ -11,22 +11,23 @@
     <h1>Gerenciamento de Séries</h1>
 
     <table id="tabelaFormulario">    
-        <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
+        <tr> <td>ID:</td> <td><input type="text" id="txtId" disabled></td> </tr>
         <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
-        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
-        <tr> <td>Ano:</td> <td><input type="text" id="txtAno"></td> </tr> 
+        <tr> <td>Descrição:</td> <td><input type="text" id="txtDescricao"></td> </tr> <!-- Novo campo -->
+        <tr> <td>Ano Início:</td> <td><input type="number" id="txtAnoInicio"></td> </tr> <!-- Novo campo -->
+        <tr> <td>Ano Fim:</td> <td><input type="number" id="txtAnoFim"></td> </tr> <!-- Novo campo -->
         <tr><td></td><td>
             <input type="button" value="Salvar" onclick="salvarSerie()" id="btnSalvar">
             <input type="button" value="Apagar" onclick="apagarSerie()" id="btnApagar">
             <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
         </td></tr>
     </table> 
-    
+   
     <p style="font-weight:bold" id="paragrafoMensagem"></p>
     
     <table id="tabelaSeries">  
         <tr><td><input type="button" value="Novo" onclick="novaSerie()" id="btnNovo"></td> <td></td> <td></td></tr>
-        <tr> <th>ID</th> <th>Título</th> <th>Gênero</th> <th>Ano</th> </tr>
+        <tr> <th>ID</th> <th>Título</th> <th>Descrição</th> <th>Ano Início</th> <th>Ano Fim</th> </tr>
         <tbody id="corpoTabelaSeries"> </tbody>
     </table>
     
@@ -37,8 +38,9 @@
         const corpoTabela = document.querySelector('#corpoTabelaSeries');
         const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
         const txtTitulo = document.querySelector('#txtTitulo');
-        const txtGenero = document.querySelector('#txtGenero');
-        const txtAno = document.querySelector('#txtAno');
+        const txtDescricao = document.querySelector('#txtDescricao'); // Novo campo
+        const txtAnoInicio = document.querySelector('#txtAnoInicio'); // Novo campo
+        const txtAnoFim = document.querySelector('#txtAnoFim'); // Novo campo
         const txtId = document.querySelector('#txtId');
         
         const btnNovo = document.querySelector('#btnNovo');
@@ -54,12 +56,14 @@
             paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione uma série da lista:';
             txtId.value = '';
             txtTitulo.value = '';
-            txtGenero.value = '';
-            txtAno.value = '';
+            txtDescricao.value = ''; // Novo campo
+            txtAnoInicio.value = ''; // Novo campo
+            txtAnoFim.value = ''; // Novo campo
             txtId.disabled = true;
             txtTitulo.disabled = true;
-            txtGenero.disabled = true;
-            txtAno.disabled = true;
+            txtDescricao.disabled = true; // Novo campo
+            txtAnoInicio.disabled = true; // Novo campo
+            txtAnoFim.disabled = true; // Novo campo
             
             btnNovo.disabled = false;
             btnSalvar.disabled = true;
@@ -87,8 +91,9 @@
                 let linha = corpoTabela.insertRow();
                 let celulaId = linha.insertCell();
                 let celulaTitulo = linha.insertCell();
-                let celulaGenero = linha.insertCell();
-                let celulaAno = linha.insertCell();
+                let celulaDescricao = linha.insertCell(); // Novo campo
+                let celulaAnoInicio = linha.insertCell(); // Novo campo
+                let celulaAnoFim = linha.insertCell(); // Novo campo
                 
                 let alink = document.createElement('a');
                 alink.textContent = s.id;
@@ -96,8 +101,9 @@
                 alink.onclick =  function() { selecionarSerie(s.id); };
                 celulaId.appendChild(alink);
                 celulaTitulo.textContent = s.titulo;
-                celulaGenero.textContent = s.genero;
-                celulaAno.textContent = s.ano;
+                celulaDescricao.textContent = s.descricao; // Novo campo
+                celulaAnoInicio.textContent = s.anoInicio; // Novo campo
+                celulaAnoFim.textContent = s.anoFim; // Novo campo
             }
         }
         
@@ -113,13 +119,15 @@
             paragrafoMensagem.textContent = 'Altere e salve os dados da série, ou então apague o registro da série.';
             txtId.value = serie.id;
             txtTitulo.value = serie.titulo;
-            txtGenero.value = serie.genero;
-            txtAno.value = serie.ano;
+            txtDescricao.value = serie.descricao; // Novo campo
+            txtAnoInicio.value = serie.anoInicio; // Novo campo
+            txtAnoFim.value = serie.anoFim; // Novo campo
             
             txtId.disabled = true;
             txtTitulo.disabled = false;
-            txtGenero.disabled = false;
-            txtAno.disabled = false;
+            txtDescricao.disabled = false; // Novo campo
+            txtAnoInicio.disabled = false; // Novo campo
+            txtAnoFim.disabled = false; // Novo campo
             
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
@@ -136,13 +144,15 @@
             
             txtId.value = '';
             txtTitulo.value = '';
-            txtGenero.value = '';
-            txtAno.value = '';
+            txtDescricao.value = ''; // Novo campo
+            txtAnoInicio.value = ''; // Novo campo
+            txtAnoFim.value = ''; // Novo campo
             
             txtId.disabled = true;
             txtTitulo.disabled = false;
-            txtGenero.disabled = false;
-            txtAno.disabled = false;
+            txtDescricao.disabled = false; // Novo campo
+            txtAnoInicio.disabled = false; // Novo campo
+            txtAnoFim.disabled = false; // Novo campo
             
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
@@ -164,8 +174,9 @@
         function criarSerie() {
             const dadosSerie = {
                 'titulo': txtTitulo.value,
-                'genero': txtGenero.value,
-                'ano': txtAno.value
+                'descricao': txtDescricao.value, // Novo campo
+                'anoInicio': parseInt(txtAnoInicio.value), // Novo campo
+                'anoFim': parseInt(txtAnoFim.value) // Novo campo
             };
             const errorHandler = function(error) { 
                 paragrafoMensagem.textContent = 'Erro ao criar nova série (código ' + error.message + ')'; 
@@ -180,8 +191,9 @@
             const dadosSerie = {
                 'id': txtId.value,
                 'titulo': txtTitulo.value,
-                'genero': txtGenero.value,
-                'ano': txtAno.value
+                'descricao': txtDescricao.value, // Novo campo
+                'anoInicio': parseInt(txtAnoInicio.value), // Novo campo
+                'anoFim': parseInt(txtAnoFim.value) // Novo campo
             };
             asyncAlterarSerie(dadosSerie, inicializar, errorHandler);        	
         }
