@@ -12,24 +12,39 @@
 
     <table id="tabelaFormulario">    
         <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
-        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
-        <tr> <td>Autor:</td> <td><input type="text" id="txtAutor"></td> </tr>
-        <tr> <td>Ano de Publicação:</td> <td><input type="number" id="txtAnoPublicacao"></td> </tr>
-        <tr> <td>Páginas:</td> <td><input type="number" id="txtPaginas"></td> </tr>
-        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
-        <tr> <td>Classificação Indicativa:</td> <td><input type="text" id="txtClassificacaoIndicativa"></td> </tr>
-        <tr><td></td><td>
-            <input type="button" value="Salvar" onclick="salvarLivro()" id="btnSalvar">
-            <input type="button" value="Apagar" onclick="apagarLivro()" id="btnApagar">
-            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
-        </td></tr>
+        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo" value="O Senhor dos Anéis"></td> </tr>
+        <tr> <td>Autor:</td> <td><input type="text" id="txtAutor" value="J.R.R. Tolkien"></td> </tr>
+        <tr> <td>Ano de Publicação:</td> <td><input type="number" id="txtAnoPublicacao" value="1954"></td> </tr>
+        <tr> <td>Páginas:</td> <td><input type="number" id="txtPaginas" value="1178"></td> </tr>
+        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero" value="Fantasia"></td> </tr>
+        <tr> <td>Classificação Indicativa:</td> <td><input type="text" id="txtClassificacaoIndicativa" value="Livre"></td> </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Salvar" onclick="salvarLivro()" id="btnSalvar">
+                <input type="button" value="Apagar" onclick="apagarLivro()" id="btnApagar">
+                <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+            </td>
+        </tr>
     </table> 
 
     <p style="font-weight:bold" id="paragrafoMensagem"></p>
 
     <table id="tabelaLivros">  
-        <tr><td><input type="button" value="Novo" onclick="novoLivro()" id="btnNovo"></td> <td></td> <td></td></tr>
-        <tr> <th>ID</th> <th>Título</th> <th>Autor</th> <th>Ano</th> <th>Gênero</th> </tr>
+        <tr>
+            <td><input type="button" value="Novo" onclick="novoLivro()" id="btnNovo"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr> 
+            <th>ID</th> 
+            <th>Título</th> 
+            <th>Autor</th> 
+            <th>Ano</th> 
+            <th>Páginas</th>
+            <th>Gênero</th>
+            <th>Classificação Indicativa</th>
+        </tr>
         <tbody id="corpoTabelaLivros"> </tbody>
     </table>
 
@@ -60,12 +75,12 @@
             criandoNovoLivro = false;
             paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione um livro da lista:';
             txtId.value = '';
-            txtTitulo.value = '';
-            txtAutor.value = '';
-            txtAnoPublicacao.value = '';
-            txtPaginas.value = '';
-            txtGenero.value = '';
-            txtClassificacaoIndicativa.value = '';
+            txtTitulo.value = 'O Senhor dos Anéis';
+            txtAutor.value = 'J.R.R. Tolkien';
+            txtAnoPublicacao.value = 1954;
+            txtPaginas.value = 1178;
+            txtGenero.value = 'Fantasia';
+            txtClassificacaoIndicativa.value = 'Livre';
 
             txtId.disabled = true;
             txtTitulo.disabled = true;
@@ -103,7 +118,9 @@
                 let celulaTitulo = linha.insertCell();
                 let celulaAutor = linha.insertCell();
                 let celulaAno = linha.insertCell();
+                let celulaPaginas = linha.insertCell();
                 let celulaGenero = linha.insertCell();
+                let celulaClassificacao = linha.insertCell();
 
                 let alink = document.createElement('a');
                 alink.textContent = l.id;
@@ -113,7 +130,9 @@
                 celulaTitulo.textContent = l.titulo;
                 celulaAutor.textContent = l.autor;
                 celulaAno.textContent = l.anoPublicacao;
+                celulaPaginas.textContent = l.paginas;
                 celulaGenero.textContent = l.genero;
+                celulaClassificacao.textContent = l.classificacaoIndicativa;
             }
         }
 
@@ -220,19 +239,17 @@
             asyncAlterarLivro(dadosLivro, inicializar, errorHandler);
         }
 
+        function apagarLivro() {
+            const errorHandler = function(error) {
+                paragrafoMensagem.textContent = 'Erro ao apagar livro (código ' + error.message + ')';
+            }
+            asyncApagarLivro(txtId.value, inicializar, errorHandler);
+        }
+
         function cancelarEdicao() {
             inicializar();
         }
-
-        function apagarLivro() {
-            const id = txtId.value;
-            const errorHandler = function(error) {
-                paragrafoMensagem.textContent = "Erro ao apagar livro (código " + error.message + ")";
-            }
-            asyncApagarLivro(id, inicializar, errorHandler);
-        }
     </script>
-
 </body>
 
 </html>
