@@ -1,4 +1,4 @@
-package io.github.pravnkr.jpainheritence.models;
+package com.project.demo;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
