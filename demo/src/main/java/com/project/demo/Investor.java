@@ -1,14 +1,13 @@
-import javax.persistence.*;
-
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
-public abstract class Investor {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public abstract class Investor extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     private String name;
-
-    // Getters e Setters
 }
+
