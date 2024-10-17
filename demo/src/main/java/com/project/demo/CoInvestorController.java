@@ -1,4 +1,4 @@
-package io.github.pravnkr.jpainheritence.controllers;
+package com.project.demo;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.github.pravnkr.jpainheritence.models.CoInvestor;
-import io.github.pravnkr.jpainheritence.repositories.InvestorRepository;
 
 @RestController
 public class CoInvestorController {
