@@ -4,10 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "documentarios")
-public class Documentario {
+@EqualsAndHashCode(callSuper = true)
+public class Documentario extends ItemCultural {
 
     @Id @GeneratedValue
     private long id;
