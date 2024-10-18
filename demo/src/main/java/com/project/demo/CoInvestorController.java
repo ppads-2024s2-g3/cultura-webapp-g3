@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CoInvestorController {
 
     @Autowired
-    private InvestorRepository investorRepository;
+    private CoInvestorRepository investorRepository;
 
     public CoInvestorController() {
     }
