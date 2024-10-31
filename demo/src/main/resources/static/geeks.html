@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Geeks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="email"] {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerenciamento de Geeks</h1>
+
+    <!-- Formulário para adicionar um novo Geek -->
+    <form id="geekForm">
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <button type="submit">Adicionar Geek</button>
+    </form>
+
+    <!-- Tabela para exibir Geeks -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="geekTableBody">
+            <!-- Linhas serão inseridas aqui dinamicamente -->
+        </tbody>
+    </table>
+
+    <script>
+        // Função para carregar todos os Geeks do sistema
+        function loadGeeks() {
+            fetch('http://localhost:8080/api/geeks')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('geekTableBody');
+                    tableBody.innerHTML = ''; // Limpar tabela
+                    data.forEach(geek => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${geek.id}</td>
+                            <td>${geek.nome}</td>
+                            <td>${geek.email}</td>
+                            <td>
+                                <button onclick="deleteGeek(${geek.id})">Deletar</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar Geeks:', error));
+        }
+
+        // Função para adicionar um novo Geek
+        document.getElementById('geekForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+
+            fetch('http://localhost:8080/api/geeks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome, email })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadGeeks(); // Recarregar a lista de Geeks
+                        document.getElementById('geekForm').reset();
+                    } else {
+                        alert('Erro ao adicionar Geek');
+                    }
+                })
+                .catch(error => console.error('Erro ao adicionar Geek:', error));
+        });
+
+        // Função para deletar um Geek pelo ID
+        function deleteGeek(id) {
+            fetch(`http://localhost:8080/api/geeks/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadGeeks(); // Recarregar a lista de Geeks
+                    } else {
+                        alert('Erro ao deletar Geek');
+                    }
+                })
+                .catch(error => console.error('Erro ao deletar Geek:', error));
+        }
+
+        // Carregar Geeks ao abrir a página
+        loadGeeks();
+    </script>
+</body>
+</html>
