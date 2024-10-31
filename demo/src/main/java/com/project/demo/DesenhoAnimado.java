@@ -1,16 +1,16 @@
 package com.project.demo;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 
 
 
 @Entity
-@Table(name = "desenhos_animados")
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("DESENHO_ANIMADO")
 public class DesenhoAnimado extends ItemCultural {
 
     @Id @GeneratedValue
