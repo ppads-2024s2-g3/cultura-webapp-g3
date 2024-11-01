@@ -67,7 +67,7 @@
     <script>
         // Função para carregar todos os Geeks do sistema
         function loadGeeks() {
-            fetch('http://localhost:8080/api/geeks')
+            fetch('/geeks')
                 .then(response => response.json())
                 .then(data => {
                     const tableBody = document.getElementById('geekTableBody');
@@ -94,7 +94,7 @@
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
 
-            fetch('http://localhost:8080/api/geeks', {
+            fetch('/geeks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -114,7 +114,7 @@
 
         // Função para deletar um Geek pelo ID
         function deleteGeek(id) {
-            fetch(`http://localhost:8080/api/geeks/${id}`, {
+            fetch(`/geeks/${id}`, {
                 method: 'DELETE'
             })
                 .then(response => {
