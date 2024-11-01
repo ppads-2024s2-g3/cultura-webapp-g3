@@ -15,9 +15,13 @@ public class AvaliacaoController {
     }
 
     @PostMapping
-    public ResponseEntity<Avaliacao> createAvaliacao(@RequestBody Avaliacao avaliacao) {
-        Avaliacao savedAvaliacao = avaliacaoRepository.save(avaliacao);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedAvaliacao);
+    public ResponseEntity<?> createAvaliacao(@RequestBody Avaliacao avaliacao) {
+        try {
+            Avaliacao savedAvaliacao = avaliacaoRepository.save(avaliacao);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedAvaliacao);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping
