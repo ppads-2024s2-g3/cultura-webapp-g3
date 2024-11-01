@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações</title>
+    <script>
+        async function createAvaliacao() {
+            const nota = document.getElementById('nota').value;
+            const comentario = document.getElementById('comentario').value;
+            const geekId = document.getElementById('geekId').value;
+            const itemCulturalId = document.getElementById('itemCulturalId').value; 
+
+            const response = await fetch('/avaliacoes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nota: nota, comentario: comentario, geek: { id: geekId }, itemCultural: { id: itemCulturalId } })
+            });
+
+            if (response.ok) {
+                alert('Avaliação criada com sucesso!');
+                getAvaliacoes(); // Atualiza a lista de avaliações
+            } else {
+                alert('Erro ao criar avaliação: ' + await response.text());
+            }
+        }
+
+        async function getAvaliacoes() {
+            const response = await fetch('/avaliacoes');
+            const avaliacoes = await response.json();
+            const avaliacoesList = document.getElementById('avaliacoesList');
+            avaliacoesList.innerHTML = ''; // Limpa a lista atual
+
+            avaliacoes.forEach(avaliacao => {
+                const li = document.createElement('li');
+                li.textContent = `ID: ${avaliacao.id}, Nota: ${avaliacao.nota}, Comentário: ${avaliacao.comentario}`;
+                avaliacoesList.appendChild(li);
+            });
+        }
+
+        async function deleteAvaliacao() {
+            const id = document.getElementById('deleteId').value;
+
+            const response = await fetch(`/avaliacoes/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Avaliação deletada com sucesso!');
+                getAvaliacoes(); // Atualiza a lista de avaliações
+            } else {
+                alert('Erro ao deletar avaliação: ' + await response.text());
+            }
+        }
+
+        window.onload = getAvaliacoes; // Carrega as avaliações na inicialização
+    </script>
+</head>
+<body>
+    <h1>Avaliações</h1>
+    
+    <h2>Criar Avaliação</h2>
+    <label for="nota">Nota (0 a 10):</label>
+    <input type="number" id="nota" min="0" max="10" required>
+    <br>
+    <label for="comentario">Comentário:</label>
+    <input type="text" id="comentario" required>
+    <br>
+    <label for="comentario">Geek ID :</label>
+    <input type="number" id="geekId" required>
+    <br>
+    <label for="comentario">Item Cultural ID:</label>
+    <input type="number" id="itemCultural" required>
+    <br>
+    <button onclick="createAvaliacao()">Criar Avaliação</button>
+    
+    <h2>Lista de Avaliações</h2>
+    <ul id="avaliacoesList"></ul>
+
+    <h2>Deletar Avaliação</h2>
+    <label for="deleteId">ID da Avaliação:</label>
+    <button onclick="deleteAvaliacao()">Deletar Avaliação</button>
+</body>
+</html>
