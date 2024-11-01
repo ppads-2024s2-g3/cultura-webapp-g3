@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "documentarios")
 @EqualsAndHashCode(callSuper = true)
 public class Documentario extends ItemCultural {
 

@@ -1,10 +1,16 @@
 package com.project.demo;
 
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class ItemCultural {
 
     @Id @GeneratedValue
