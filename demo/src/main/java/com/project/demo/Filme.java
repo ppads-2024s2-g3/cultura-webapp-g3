@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "filmes")
 @EqualsAndHashCode(callSuper = true)
 public class Filme  extends ItemCultural {
 
