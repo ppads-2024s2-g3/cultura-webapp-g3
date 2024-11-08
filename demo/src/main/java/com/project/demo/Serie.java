@@ -6,8 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "series")
-public class Serie {
+public class Serie extends ItemCultural {
 
     @Id @GeneratedValue
     private long id;
