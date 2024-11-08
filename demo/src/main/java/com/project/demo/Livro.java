@@ -1,14 +1,16 @@
 package com.project.demo;
 
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "livros")
-public class Livro {
+@EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("livro")
+public class Livro extends ItemCultural{
 
     @Id @GeneratedValue
     private long id;

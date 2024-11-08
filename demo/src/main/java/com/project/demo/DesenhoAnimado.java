@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@DiscriminatorValue("DESENHO_ANIMADO")
+@DiscriminatorValue("desenhoAnimado")
 public class DesenhoAnimado extends ItemCultural {
 
     @Id @GeneratedValue
