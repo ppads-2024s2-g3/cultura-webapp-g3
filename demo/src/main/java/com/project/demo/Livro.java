@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "livros")
-public class Livro {
+
+public class Livro extends ItemCultural{
 
     @Id @GeneratedValue
     private long id;
