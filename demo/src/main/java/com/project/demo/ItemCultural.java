@@ -22,7 +22,7 @@ import jakarta.persistence.InheritanceType;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Livro.class, name = "LIVRO"),
         @JsonSubTypes.Type(value = Filme.class, name = "FILME"),
-        @JsonSubTypes.Type(value = Filme.class, name = "SERIE")
+        @JsonSubTypes.Type(value = Serie.class, name = "SERIE") // Corrigido para Série
 })
 public abstract class ItemCultural {
 

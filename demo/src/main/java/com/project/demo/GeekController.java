@@ -32,22 +32,19 @@ public class GeekController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteAvaliacao(@PathVariable Long id) {
-        // Verifica se a avaliação existe
-        Avaliacao avaliacao = avaliacaoRepository.findById(id).orElse(null);
-        if (avaliacao != null) {
-            Geek geek = avaliacao.getGeek();
-            
-            // Excluir a avaliação
-            avaliacaoRepository.delete(avaliacao);
-    
-            // Verifica se o Geek ainda tem avaliações associadas
-            boolean geekHasAvaliacoes = avaliacaoRepository.existsByGeek(geek);
-            if (!geekHasAvaliacoes) {
-                // Se o Geek não tiver mais avaliações, pode deletar o Geek
-                geekRepository.delete(geek);
+    public ResponseEntity<Void> deleteGeek(@PathVariable Long id) {
+        // Verifica se o Geek existe
+        Geek geek = geekRepository.findById(id).orElse(null);
+        if (geek != null) {
+            // Exclui todas as avaliações associadas ao Geek
+            List<Avaliacao> avaliacoes = avaliacaoRepository.findByGeek(geek);
+            for (Avaliacao avaliacao : avaliacoes) {
+                avaliacaoRepository.delete(avaliacao);
             }
-    
+            
+            // Agora pode excluir o Geek
+            geekRepository.delete(geek);
+            
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             return ResponseEntity.notFound().build(); // 404 Not Found
