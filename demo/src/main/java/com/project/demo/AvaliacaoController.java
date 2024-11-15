@@ -58,21 +58,50 @@ public class AvaliacaoController {
         return avaliacaoRepository.findAll();
     }
 
-    // Método para excluir avaliações e geek associado
-    @DeleteMapping("/{id}")  // Corrigido para /avaliacoes/{id}
-    public ResponseEntity<Void> deleteGeek(@PathVariable Long id) {
-        // Excluir avaliações associadas
-        List<Avaliacao> avaliacoes = avaliacaoRepository.findByGeekId(id);
-        for (Avaliacao avaliacao : avaliacoes) {
-            avaliacaoRepository.delete(avaliacao);
-        }
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<String> deleteAvaliacao(@PathVariable Long id) {
+        try {
+            // Verifica se a avaliação existe
+            Avaliacao avaliacao = avaliacaoRepository.findById(id).orElse(null);
+            if (avaliacao != null) {
+                Geek geek = avaliacao.getGeek();
+                ItemCultural itemCultural = avaliacao.getItemCultural();
+                
+                // Desvincula o Geek e o ItemCultural da avaliação
+                avaliacao.setGeek(null);
+                avaliacao.setItemCultural(null);
+                
+                // Salva a avaliação com as referências desvinculadas
+                avaliacaoRepository.save(avaliacao);
     
-        // Agora podemos excluir o Geek
-        if (geekRepository.existsById(id)) {
-            geekRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+                // Excluir a avaliação
+                avaliacaoRepository.delete(avaliacao);
+    
+                // Verifica se o Geek ainda tem avaliações associadas
+                boolean geekHasAvaliacoes = avaliacaoRepository.existsByGeek(geek);
+                
+                if (!geekHasAvaliacoes) {
+                    // Se o Geek não tiver mais avaliações, pode deletar o Geek
+                    geekRepository.delete(geek);
+                }
+    
+                // Verifica se o ItemCultural ainda está associado a alguma avaliação
+                boolean itemCulturalHasAvaliacoes = avaliacaoRepository.existsByItemCultural(itemCultural);
+                
+                if (!itemCulturalHasAvaliacoes) {
+                    // Se o ItemCultural não tiver mais avaliações, pode deletar o ItemCultural
+                    itemCulturalRepository.delete(itemCultural);
+                }
+    
+                return ResponseEntity.noContent().build(); // 204 No Content
+            } else {
+                return ResponseEntity.notFound().build(); // 404 Not Found
+            }
+        } catch (Exception e) {
+            // Log detalhado do erro para facilitar o diagnóstico
+            System.err.println("Erro ao deletar avaliação: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar avaliação");
         }
     }
 }

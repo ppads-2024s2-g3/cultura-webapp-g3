@@ -8,5 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
     List<Avaliacao> findByGeekId(Long geekId); // Método para encontrar avaliações por Geek ID
+
+    long countByGeekId(Long id);
+
+    boolean existsByGeek(Geek geek);
+
+	boolean existsByItemCultural(ItemCultural itemCultural);
 }
 

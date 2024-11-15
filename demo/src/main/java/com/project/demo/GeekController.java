@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.transaction.Transactional;
+
 @RestController
 @RequestMapping("/geeks")
 public class GeekController {
@@ -28,10 +30,24 @@ public class GeekController {
         return geekRepository.findAll();
     }
 
-    @DeleteMapping("/avaliacoes/{id}")
-    public ResponseEntity<Void> deleteGeek(@PathVariable Long id) {
-        if (geekRepository.existsById(id)) {
-            geekRepository.deleteById(id);
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteAvaliacao(@PathVariable Long id) {
+        // Verifica se a avaliação existe
+        Avaliacao avaliacao = avaliacaoRepository.findById(id).orElse(null);
+        if (avaliacao != null) {
+            Geek geek = avaliacao.getGeek();
+            
+            // Excluir a avaliação
+            avaliacaoRepository.delete(avaliacao);
+    
+            // Verifica se o Geek ainda tem avaliações associadas
+            boolean geekHasAvaliacoes = avaliacaoRepository.existsByGeek(geek);
+            if (!geekHasAvaliacoes) {
+                // Se o Geek não tiver mais avaliações, pode deletar o Geek
+                geekRepository.delete(geek);
+            }
+    
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             return ResponseEntity.notFound().build(); // 404 Not Found
