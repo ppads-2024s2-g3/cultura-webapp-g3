@@ -4,25 +4,26 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
+
+
 
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@DiscriminatorValue("documentario")
-public class Documentario extends ItemCultural {
+@DiscriminatorValue("desenhoAnimado")
+public class DesenhoAnimado extends ItemCultural {
 
     @Id @GeneratedValue
     private long id;
 
     private String nome;
-    private String diretor;
+    private String criador;
     private int anoLancamento;
-    private int duracaoMediaMinutos;
     private String genero;
-    private String tema;
+    private int numeroTemporadas;
+    private int numeroEpisodios;
 
-    public Documentario() {
+    public DesenhoAnimado() {
         super();
     }
 
@@ -42,12 +43,12 @@ public class Documentario extends ItemCultural {
         this.nome = nome;
     }
 
-    public String getDiretor() {
-        return diretor;
+    public String getCriador() {
+        return criador;
     }
 
-    public void setDiretor(String diretor) {
-        this.diretor = diretor;
+    public void setCriador(String criador) {
+        this.criador = criador;
     }
 
     public int getAnoLancamento() {
@@ -58,14 +59,6 @@ public class Documentario extends ItemCultural {
         this.anoLancamento = anoLancamento;
     }
 
-    public int getDuracaoMediaMinutos() {
-        return duracaoMediaMinutos;
-    }
-
-    public void setDuracaoMediaMinutos(int duracaoMediaMinutos) {
-        this.duracaoMediaMinutos = duracaoMediaMinutos;
-    }
-
     public String getGenero() {
         return genero;
     }
@@ -74,13 +67,19 @@ public class Documentario extends ItemCultural {
         this.genero = genero;
     }
 
-    public String getTema() {
-        return tema;
+    public int getNumeroTemporadas() {
+        return numeroTemporadas;
     }
 
-    public void setTema(String tema) {
-        this.tema = tema;
+    public void setNumeroTemporadas(int numeroTemporadas) {
+        this.numeroTemporadas = numeroTemporadas;
+    }
+
+    public int getNumeroEpisodios() {
+        return numeroEpisodios;
+    }
+
+    public void setNumeroEpisodios(int numeroEpisodios) {
+        this.numeroEpisodios = numeroEpisodios;
     }
 }
-
-
