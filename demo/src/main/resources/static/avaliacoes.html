@@ -1,48 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avaliações</title>
     <script>
-            async function createAvaliacao() {
-                const nota = parseInt(document.getElementById('nota').value);
-                const comentario = document.getElementById('comentario').value;
-                const geekId = parseInt(document.getElementById('geekId').value);
-                const itemCulturalId = parseInt(document.getElementById('itemCulturalId').value);
+        // Função para criar uma avaliação
+        async function createAvaliacao() {
+            const nota = parseInt(document.getElementById('nota').value);
+            const comentario = document.getElementById('comentario').value;
+            const geekId = parseInt(document.getElementById('geekId').value);
+            const itemCulturalId = parseInt(document.getElementById('itemCulturalId').value);
+            const itemType = document.getElementById('itemType').value;
 
-                const data = {
-                    nota: nota,
-                    comentario: comentario,
-                    geek: { id: geekId },
-                    itemCultural: { id: itemCulturalId }
-                };
-
-                console.log("Dados enviados:", JSON.stringify(data)); // Adicione este console.log para verificar os dados
-
-                const response = await fetch('/avaliacoes', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    alert('Avaliação criada com sucesso!');
-                    getAvaliacoes();
-                } else {
-                    const errorText = await response.text();
-                    console.error("Erro ao criar avaliação:", errorText);
-                    alert('Erro ao criar avaliação: ' + errorText);
+            // Estrutura dos dados a serem enviados
+            const data = {
+                nota: nota,
+                comentario: comentario,
+                geek: { id: geekId },
+                itemCultural: {
+                    id: itemCulturalId,
+                    item_type: itemType
                 }
-            }
+            };
 
+            console.log("Dados enviados:", JSON.stringify(data)); // Log para verificar os dados
+
+            // Envia a requisição para criar a avaliação
+            const response = await fetch('/avaliacoes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            // Verifica a resposta da criação
+            if (response.ok) {
+                alert('Avaliação criada com sucesso!');
+                getAvaliacoes(); // Atualiza a lista de avaliações
+            } else {
+                const errorText = await response.text();
+                console.error("Erro ao criar avaliação:", errorText);
+                alert('Erro ao criar avaliação: ' + errorText);
+            }
+        }
+
+        // Função para pegar as avaliações e exibi-las
         async function getAvaliacoes() {
             const response = await fetch('/avaliacoes');
             const avaliacoes = await response.json();
             const avaliacoesList = document.getElementById('avaliacoesList');
-            avaliacoesList.innerHTML = ''; // Limpa a lista atual
+            avaliacoesList.innerHTML = ''; // Limpa a lista de avaliações antes de adicionar novas
 
             avaliacoes.forEach(avaliacao => {
                 const li = document.createElement('li');
@@ -51,13 +61,22 @@
             });
         }
 
+        // Função para deletar uma avaliação
+        // Função para deletar uma avaliação
         async function deleteAvaliacao() {
             const id = document.getElementById('deleteId').value;
 
-            const response = await fetch(`/avaliacoes/${id}`, {
+            if (!id) {
+                alert('Por favor, forneça um ID válido.');
+                return;
+            }
+
+            // Envia a requisição para deletar a avaliação
+            const response = await fetch(`/avaliacoes/${id}`, {  // Corrigido aqui
                 method: 'DELETE'
             });
 
+            // Verifica a resposta da deleção
             if (response.ok) {
                 alert('Avaliação deletada com sucesso!');
                 getAvaliacoes(); // Atualiza a lista de avaliações
@@ -66,12 +85,14 @@
             }
         }
 
-        window.onload = getAvaliacoes; // Carrega as avaliações na inicialização
+        // Carrega as avaliações quando a página for carregada
+        window.onload = getAvaliacoes;
     </script>
 </head>
+
 <body>
     <h1>Avaliações</h1>
-    
+
     <h2>Criar Avaliação</h2>
     <label for="nota">Nota (0 a 10):</label>
     <input type="number" id="nota" min="0" max="10" required>
@@ -79,19 +100,28 @@
     <label for="comentario">Comentário:</label>
     <input type="text" id="comentario" required>
     <br>
-    <label for="comentario">Geek ID :</label>
+    <label for="geekId">Geek ID:</label>
     <input type="number" id="geekId" required>
     <br>
-    <label for="comentario">Item Cultural ID:</label>
-    <input type="number" id="itemCulturalId" required>  <!-- Corrigido para 'itemCulturalId' -->
+    <label for="itemCulturalId">Item Cultural ID:</label>
+    <input type="number" id="itemCulturalId" required>
+    <br>
+    <label for="itemType">Tipo de Item Cultural:</label>
+    <select id="itemType" required>
+        <option value="LIVRO">Livro</option>
+        <option value="FILME">Filme</option>
+        <option value="SERIE">Série</option>
+    </select>
     <br>
     <button onclick="createAvaliacao()">Criar Avaliação</button>
-    
+
     <h2>Lista de Avaliações</h2>
     <ul id="avaliacoesList"></ul>
 
     <h2>Deletar Avaliação</h2>
     <label for="deleteId">ID da Avaliação:</label>
+    <input type="number" id="deleteId" required>
     <button onclick="deleteAvaliacao()">Deletar Avaliação</button>
 </body>
+
 </html>

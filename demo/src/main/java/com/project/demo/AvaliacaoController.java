@@ -58,11 +58,18 @@ public class AvaliacaoController {
         return avaliacaoRepository.findAll();
     }
 
-    // Método para deletar avaliação
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAvaliacao(@PathVariable Long id) {
-        if (avaliacaoRepository.existsById(id)) {
-            avaliacaoRepository.deleteById(id);
+    // Método para excluir avaliações e geek associado
+    @DeleteMapping("/{id}")  // Corrigido para /avaliacoes/{id}
+    public ResponseEntity<Void> deleteGeek(@PathVariable Long id) {
+        // Excluir avaliações associadas
+        List<Avaliacao> avaliacoes = avaliacaoRepository.findByGeekId(id);
+        for (Avaliacao avaliacao : avaliacoes) {
+            avaliacaoRepository.delete(avaliacao);
+        }
+    
+        // Agora podemos excluir o Geek
+        if (geekRepository.existsById(id)) {
+            geekRepository.deleteById(id);
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             return ResponseEntity.notFound().build(); // 404 Not Found

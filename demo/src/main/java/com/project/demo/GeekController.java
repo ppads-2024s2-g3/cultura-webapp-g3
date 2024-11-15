@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/geeks")
 public class GeekController {
     private final GeekRepository geekRepository;
+    private final AvaliacaoRepository avaliacaoRepository; // Repositório de avaliações
 
-    public GeekController(GeekRepository geekRepository) {
+
+    public GeekController(GeekRepository geekRepository, AvaliacaoRepository avaliacaoRepository) {
         this.geekRepository = geekRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
     }
 
     @PostMapping
@@ -25,7 +28,7 @@ public class GeekController {
         return geekRepository.findAll();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/avaliacoes/{id}")
     public ResponseEntity<Void> deleteGeek(@PathVariable Long id) {
         if (geekRepository.existsById(id)) {
             geekRepository.deleteById(id);
