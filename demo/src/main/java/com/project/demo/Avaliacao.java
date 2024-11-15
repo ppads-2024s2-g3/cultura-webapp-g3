@@ -1,6 +1,8 @@
 package com.project.demo;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,10 +17,10 @@ public class Avaliacao {
     private int nota; // Nota de 0 a 10
     private String comentario;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     private Geek geek;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     private ItemCultural itemCultural; // Supondo que você tenha uma classe ItemCultural
 
     // Construtores, getters e setters

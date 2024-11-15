@@ -1,5 +1,7 @@
 package com.project.demo;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -11,11 +13,21 @@ import jakarta.persistence.InheritanceType;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "item_type",
+        visible = true
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Livro.class, name = "LIVRO"),
+        @JsonSubTypes.Type(value = Filme.class, name = "FILME"),
+        @JsonSubTypes.Type(value = Filme.class, name = "SERIE")
+})
 public abstract class ItemCultural {
 
     @Id @GeneratedValue
     private long id;
-
     private String nome;
     private int anoLancamento;
     private String genero;

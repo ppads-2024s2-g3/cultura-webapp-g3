@@ -5,27 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avaliações</title>
     <script>
-        async function createAvaliacao() {
-            const nota = document.getElementById('nota').value;
-            const comentario = document.getElementById('comentario').value;
-            const geekId = document.getElementById('geekId').value;
-            const itemCulturalId = document.getElementById('itemCulturalId').value; 
+            async function createAvaliacao() {
+                const nota = parseInt(document.getElementById('nota').value);
+                const comentario = document.getElementById('comentario').value;
+                const geekId = parseInt(document.getElementById('geekId').value);
+                const itemCulturalId = parseInt(document.getElementById('itemCulturalId').value);
 
-            const response = await fetch('/avaliacoes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nota: nota, comentario: comentario, geek: { id: geekId }, itemCultural: { id: itemCulturalId } })
-            });
+                const data = {
+                    nota: nota,
+                    comentario: comentario,
+                    geek: { id: geekId },
+                    itemCultural: { id: itemCulturalId }
+                };
 
-            if (response.ok) {
-                alert('Avaliação criada com sucesso!');
-                getAvaliacoes(); // Atualiza a lista de avaliações
-            } else {
-                alert('Erro ao criar avaliação: ' + await response.text());
+                console.log("Dados enviados:", JSON.stringify(data)); // Adicione este console.log para verificar os dados
+
+                const response = await fetch('/avaliacoes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Avaliação criada com sucesso!');
+                    getAvaliacoes();
+                } else {
+                    const errorText = await response.text();
+                    console.error("Erro ao criar avaliação:", errorText);
+                    alert('Erro ao criar avaliação: ' + errorText);
+                }
             }
-        }
 
         async function getAvaliacoes() {
             const response = await fetch('/avaliacoes');
@@ -72,7 +83,7 @@
     <input type="number" id="geekId" required>
     <br>
     <label for="comentario">Item Cultural ID:</label>
-    <input type="number" id="itemCultural" required>
+    <input type="number" id="itemCulturalId" required>  <!-- Corrigido para 'itemCulturalId' -->
     <br>
     <button onclick="createAvaliacao()">Criar Avaliação</button>
     
