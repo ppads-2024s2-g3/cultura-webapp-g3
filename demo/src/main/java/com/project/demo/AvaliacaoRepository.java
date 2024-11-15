@@ -14,5 +14,7 @@ public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
     boolean existsByGeek(Geek geek);
 
 	boolean existsByItemCultural(ItemCultural itemCultural);
+
+    List<Avaliacao> findByGeek(Geek geek);
 }
 
