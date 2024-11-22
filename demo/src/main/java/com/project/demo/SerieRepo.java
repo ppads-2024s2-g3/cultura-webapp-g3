@@ -12,7 +12,5 @@ public interface SerieRepo extends CrudRepository<Serie, Long> {
 
     Optional<Serie> findById(long id);
 
-    Serie save(Serie serie);
-
     void deleteById(long id);
 }

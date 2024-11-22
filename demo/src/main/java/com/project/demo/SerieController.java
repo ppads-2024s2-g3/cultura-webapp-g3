@@ -39,8 +39,16 @@ class SerieController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao alterar dados da série com id " + serieId);
     }
 
-    @DeleteMapping(value = "/api/series/{id}")
+    @DeleteMapping("/api/series/{id}")
     void deleteSerie(@PathVariable long id) {
-        serieRepo.deleteById(id);
+        if (id <= 0) {  // Evitar IDs inválidos
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID inválido: " + id);
+        }
+        Optional<Serie> serieOpt = serieRepo.findById(id);
+        if (serieOpt.isPresent()) {
+            serieRepo.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Série com ID " + id + " não encontrada.");
+        }
     }
 }

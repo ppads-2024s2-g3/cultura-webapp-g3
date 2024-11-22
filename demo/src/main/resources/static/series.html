@@ -10,27 +10,61 @@
 <body>
     <h1>Gerenciamento de Séries</h1>
 
-    <table id="tabelaFormulario">    
-        <tr> <td>ID:</td> <td><input type="text" id="txtId" disabled></td> </tr>
-        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
-        <tr> <td>Descrição:</td> <td><input type="text" id="txtDescricao"></td> </tr> <!-- Novo campo -->
-        <tr> <td>Ano Início:</td> <td><input type="number" id="txtAnoInicio"></td> </tr> <!-- Novo campo -->
-        <tr> <td>Ano Fim:</td> <td><input type="number" id="txtAnoFim"></td> </tr> <!-- Novo campo -->
-        <tr><td></td><td>
-            <input type="button" value="Salvar" onclick="salvarSerie()" id="btnSalvar">
-            <input type="button" value="Apagar" onclick="apagarSerie()" id="btnApagar">
-            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
-        </td></tr>
-    </table> 
-   
+    <table id="tabelaFormulario">
+        <tr>
+            <td>ID:</td>
+            <td><input type="text" id="txtId" disabled></td>
+        </tr>
+        <tr>
+            <td>Título:</td>
+            <td><input type="text" id="txtTitulo"></td>
+        </tr>
+        <tr>
+            <td>Descrição:</td>
+            <td><input type="text" id="txtDescricao"></td>
+        </tr>
+        <tr>
+            <td>Ano Início:</td>
+            <td><input type="number" id="txtAnoInicio"></td>
+        </tr>
+        <tr>
+            <td>Ano Fim:</td>
+            <td><input type="number" id="txtAnoFim"></td>
+        </tr>
+        <tr>
+            <td>Tipo:</td>
+            <td><input type="text" id="txtItemType" value="SERIE" disabled></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Salvar" onclick="salvarSerie()" id="btnSalvar">
+                <input type="button" value="Apagar" onclick="apagarSerie()" id="btnApagar">
+                <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+            </td>
+        </tr>
+    </table>
+
     <p style="font-weight:bold" id="paragrafoMensagem"></p>
-    
-    <table id="tabelaSeries">  
-        <tr><td><input type="button" value="Novo" onclick="novaSerie()" id="btnNovo"></td> <td></td> <td></td></tr>
-        <tr> <th>ID</th> <th>Título</th> <th>Descrição</th> <th>Ano Início</th> <th>Ano Fim</th> </tr>
+
+    <table id="tabelaSeries">
+        <tr>
+            <td><input type="button" value="Novo" onclick="novaSerie()" id="btnNovo"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Descrição</th>
+            <th>Ano Início</th>
+            <th>Ano Fim</th>
+            <th>Tipo</th>
+            <th>Excluir</th>
+        </tr>
         <tbody id="corpoTabelaSeries"> </tbody>
     </table>
-    
+
     <script src="series-rest.js"></script>
     <script>
         const tabelaSeries = document.querySelector('#tabelaSeries');
@@ -38,17 +72,18 @@
         const corpoTabela = document.querySelector('#corpoTabelaSeries');
         const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
         const txtTitulo = document.querySelector('#txtTitulo');
-        const txtDescricao = document.querySelector('#txtDescricao'); // Novo campo
-        const txtAnoInicio = document.querySelector('#txtAnoInicio'); // Novo campo
-        const txtAnoFim = document.querySelector('#txtAnoFim'); // Novo campo
+        const txtDescricao = document.querySelector('#txtDescricao');
+        const txtAnoInicio = document.querySelector('#txtAnoInicio');
+        const txtAnoFim = document.querySelector('#txtAnoFim');
+        const txtItemType = document.querySelector('#txtItemType');
         const txtId = document.querySelector('#txtId');
-        
+
         const btnNovo = document.querySelector('#btnNovo');
         const btnSalvar = document.querySelector('#btnSalvar');
         const btnApagar = document.querySelector('#btnApagar');
         const btnCancelar = document.querySelector('#btnCancelar');
         var criandoNovaSerie = false;
-        
+
         inicializar();
 
         function inicializar() {
@@ -56,33 +91,37 @@
             paragrafoMensagem.textContent = 'Pressione o botão Novo ou selecione uma série da lista:';
             txtId.value = '';
             txtTitulo.value = '';
-            txtDescricao.value = ''; // Novo campo
-            txtAnoInicio.value = ''; // Novo campo
-            txtAnoFim.value = ''; // Novo campo
+            txtDescricao.value = '';
+            txtAnoInicio.value = '';
+            txtAnoFim.value = '';
+            txtItemType.value = 'SERIE';  // Definindo tipo fixo "SERIE"
             txtId.disabled = true;
             txtTitulo.disabled = true;
-            txtDescricao.disabled = true; // Novo campo
-            txtAnoInicio.disabled = true; // Novo campo
-            txtAnoFim.disabled = true; // Novo campo
-            
+            txtDescricao.disabled = true;
+            txtAnoInicio.disabled = true;
+            txtAnoFim.disabled = true;
+            txtItemType.disabled = true;  // Desabilitando o campo "Tipo"
+
             btnNovo.disabled = false;
             btnSalvar.disabled = true;
             btnApagar.disabled = true;
             btnCancelar.disabled = true;
-            
+
             tabelaFormulario.style.display = 'none';
             tabelaSeries.style.display = 'inline';
-            
-            listarTodasSeries();            
+
+            listarTodasSeries();
         }
 
         function listarTodasSeries() {
-            const errorHandler = function(error) { 
+            const errorHandler = function (error) {
                 paragrafoMensagem.textContent = "Erro ao listar séries (código " + error.message + ")";
-            }
-            asyncLerSeries(preencherTabela, errorHandler);
+            };
+            corpoTabela.innerHTML = ""; // Limpar a tabela antes de preencher
+            asyncLerSeriesById(preencherTabela, errorHandler); // Chamando a função com o nome correto
         }
-        
+
+
         function preencherTabela(series) {
             corpoTabela.innerHTML = "";
             var n = series.length;
@@ -91,49 +130,58 @@
                 let linha = corpoTabela.insertRow();
                 let celulaId = linha.insertCell();
                 let celulaTitulo = linha.insertCell();
-                let celulaDescricao = linha.insertCell(); // Novo campo
-                let celulaAnoInicio = linha.insertCell(); // Novo campo
-                let celulaAnoFim = linha.insertCell(); // Novo campo
-                
+                let celulaDescricao = linha.insertCell();
+                let celulaAnoInicio = linha.insertCell();
+                let celulaAnoFim = linha.insertCell();
+                let celulaTipo = linha.insertCell();
+                let celulaExcluir = linha.insertCell();
+
                 let alink = document.createElement('a');
                 alink.textContent = s.id;
                 alink.href = "javascript:void(0)";
-                alink.onclick =  function() { selecionarSerie(s.id); };
+                alink.onclick = function () { selecionarSerie(s.id); };
                 celulaId.appendChild(alink);
                 celulaTitulo.textContent = s.titulo;
-                celulaDescricao.textContent = s.descricao; // Novo campo
-                celulaAnoInicio.textContent = s.anoInicio; // Novo campo
-                celulaAnoFim.textContent = s.anoFim; // Novo campo
+                celulaDescricao.textContent = s.descricao;
+                celulaAnoInicio.textContent = s.anoInicio;
+                celulaAnoFim.textContent = s.anoFim;
+                celulaTipo.textContent = s.itemType;  // Exibindo tipo da série
+
+                let btnExcluir = document.createElement('button');
+                btnExcluir.textContent = "Excluir";
+                btnExcluir.onclick = function () { apagarSerie(s.id); };
+                celulaExcluir.appendChild(btnExcluir);
             }
         }
-        
+
         function selecionarSerie(id) {
             criandoNovaSerie = false;
-            const errorHandler = function(error) { 
+            const errorHandler = function (error) {
                 paragrafoMensagem.textContent = "Erro ao selecionar série (código " + error.message + ")";
             }
-            asyncLerSerieById(id, preencherFormulario, errorHandler);				
+            asyncLerSerieById(id, preencherFormulario, errorHandler);
         }
-            
+
         function preencherFormulario(serie) {
             paragrafoMensagem.textContent = 'Altere e salve os dados da série, ou então apague o registro da série.';
             txtId.value = serie.id;
             txtTitulo.value = serie.titulo;
-            txtDescricao.value = serie.descricao; // Novo campo
-            txtAnoInicio.value = serie.anoInicio; // Novo campo
-            txtAnoFim.value = serie.anoFim; // Novo campo
-            
+            txtDescricao.value = serie.descricao;
+            txtAnoInicio.value = serie.anoInicio;
+            txtAnoFim.value = serie.anoFim;
+
             txtId.disabled = true;
             txtTitulo.disabled = false;
-            txtDescricao.disabled = false; // Novo campo
-            txtAnoInicio.disabled = false; // Novo campo
-            txtAnoFim.disabled = false; // Novo campo
-            
+            txtDescricao.disabled = false;
+            txtAnoInicio.disabled = false;
+            txtAnoFim.disabled = false;
+            txtItemType.disabled = true;  // O tipo deve ser fixo
+
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
             btnApagar.disabled = false;
-            btnCancelar.disabled = false;  
-            
+            btnCancelar.disabled = false;
+
             tabelaFormulario.style.display = 'inline';
             tabelaSeries.style.display = 'none';
         }
@@ -141,75 +189,87 @@
         function novaSerie() {
             paragrafoMensagem.textContent = 'Preencha os dados da nova série...';
             criandoNovaSerie = true;
-            
+
             txtId.value = '';
             txtTitulo.value = '';
-            txtDescricao.value = ''; // Novo campo
-            txtAnoInicio.value = ''; // Novo campo
-            txtAnoFim.value = ''; // Novo campo
-            
+            txtDescricao.value = '';
+            txtAnoInicio.value = '';
+            txtAnoFim.value = '';
+            txtItemType.value = 'SERIE';  // O tipo é fixo
             txtId.disabled = true;
             txtTitulo.disabled = false;
-            txtDescricao.disabled = false; // Novo campo
-            txtAnoInicio.disabled = false; // Novo campo
-            txtAnoFim.disabled = false; // Novo campo
-            
+            txtDescricao.disabled = false;
+            txtAnoInicio.disabled = false;
+            txtAnoFim.disabled = false;
+            txtItemType.disabled = true;  // Não pode ser alterado
+
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
             btnApagar.disabled = true;
             btnCancelar.disabled = false;
-            
+
             tabelaFormulario.style.display = 'inline';
             tabelaSeries.style.display = 'none';
         }
-        
-        function salvarSerie() {
-            if (criandoNovaSerie) {
-                criarSerie();
-            } else {
-                alterarSerie();
-            }
-        }
-        
-        function criarSerie() {
-            const dadosSerie = {
-                'titulo': txtTitulo.value,
-                'descricao': txtDescricao.value, // Novo campo
-                'anoInicio': parseInt(txtAnoInicio.value), // Novo campo
-                'anoFim': parseInt(txtAnoFim.value) // Novo campo
-            };
-            const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = 'Erro ao criar nova série (código ' + error.message + ')'; 
-            }
-            asyncCriarSerie(dadosSerie, inicializar, errorHandler);
-        }
-        
-        function alterarSerie() {
-            const errorHandler = function(error) {
-                paragrafoMensagem.textContent = 'Erro ao alterar série (código ' + error.message + ')'; 
-            }
-            const dadosSerie = {
-                'id': txtId.value,
-                'titulo': txtTitulo.value,
-                'descricao': txtDescricao.value, // Novo campo
-                'anoInicio': parseInt(txtAnoInicio.value), // Novo campo
-                'anoFim': parseInt(txtAnoFim.value) // Novo campo
-            };
-            asyncAlterarSerie(dadosSerie, inicializar, errorHandler);        	
-        }
-        
+
         function cancelarEdicao() {
             inicializar();
         }
-        
-        function apagarSerie() {
-            const id = txtId.value;
-            const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = 'Erro ao apagar série (código ' + error.message + ')'; 
-            } 
-            asyncApagarSerie(id, inicializar, errorHandler);       		
+
+        function salvarSerie() {
+            if (txtTitulo.value.trim() === "" || txtDescricao.value.trim() === "") {
+                paragrafoMensagem.textContent = "Por favor, preencha todos os campos.";
+                return;
+            }
+
+            var dadosSerie = {
+                titulo: txtTitulo.value,
+                descricao: txtDescricao.value,
+                anoInicio: parseInt(txtAnoInicio.value),
+                anoFim: parseInt(txtAnoFim.value),
+                item_type: "SERIE"  // Adicionando tipo fixo
+            };
+
+            if (criandoNovaSerie) {
+                const errorHandler = function (error) {
+                    paragrafoMensagem.textContent = "Erro ao criar nova série (código " + error.message + ")";
+                }
+                asyncCriarSerie(dadosSerie, sucessoCriacao, errorHandler);
+            } else {
+                dadosSerie.id = txtId.value;
+                const errorHandler = function (error) {
+                    paragrafoMensagem.textContent = "Erro ao editar série (código " + error.message + ")";
+                }
+                asyncAlterarSerie(dadosSerie, sucessoAlteracao, errorHandler);
+            }
         }
-    </script>    
+
+        function sucessoCriacao() {
+            paragrafoMensagem.textContent = "Série criada com sucesso!";
+            inicializar();
+        }
+
+        function sucessoAlteracao() {
+            paragrafoMensagem.textContent = "Série alterada com sucesso!";
+            inicializar();
+        }
+
+        function apagarSerie(id) {
+            if (!id || id <= 0) {
+                alert("ID inválido. Não é possível excluir esta série.");
+                return;
+            }
+            asyncApagarSerie(id,
+                () => alert(`Série com ID ${id} excluída com sucesso!`),
+                erro => alert(`Erro ao excluir série: ${erro.message}`)
+            );
+        }
+
+        function sucessoApagamento() {
+            paragrafoMensagem.textContent = "Série apagada com sucesso!";
+            listarTodasSeries();  // Recarregando a lista de séries
+        }
+    </script>
 </body>
 
 </html>
