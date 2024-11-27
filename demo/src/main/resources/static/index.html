@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
     </head>
 <body>
-  <h1>Bem-vindo ao Gerenciamento de Professores!</h1>
-  <p>Aguarde enquanto verificamos se você já pode acessar os dados dos professores!</p>
+  <h1>Bem-vindo ao Gerenciamento de Geeks, Avaliacoes e Itens Culturais!</h1>
+  <p>Aguarde enquanto verificamos se você já pode acessar os dados!</p>
 
   <script>
 var token = localStorage.getItem('token');
@@ -21,7 +21,7 @@ xhr.open('GET', url, true);
 xhr.setRequestHeader("Authorization", "Bearer " + token);
 xhr.addEventListener('load', function() {
 	if (this.responseText == 'hi') {
-		window.location.replace("/html/professores.html");
+		window.location.replace("/html/selecionar.html");
 	}
 	else {
 		window.location.replace("/html/login.html");
