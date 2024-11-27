@@ -10,29 +10,65 @@
 <body>
     <h1>Gerenciamento de Filmes</h1>
 
-    <table id="tabelaFormulario">    
-        <tr> <td>ID:</td> <td><input type="text" id="txtId" disabled></td> </tr>
-        <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
-        <tr> <td>Diretor:</td> <td><input type="text" id="txtDiretor"></td> </tr>
-        <tr> <td>Ano de Lançamento:</td> <td><input type="number" id="txtAnoLancamento"></td> </tr>
-        <tr> <td>Duração (minutos):</td> <td><input type="number" id="txtDuracaoMinutos"></td> </tr>
-        <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr>
-        <tr> <td>Classificação Indicativa:</td> <td><input type="text" id="txtClassificacaoIndicativa"></td> </tr>
-        <tr><td></td><td>
-            <input type="button" value="Salvar" onclick="salvarFilme()" id="btnSalvar">
-            <input type="button" value="Apagar" onclick="apagarFilme()" id="btnApagar">
-            <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
-        </td></tr>
-    </table> 
-    
+    <table id="tabelaFormulario">
+        <tr>
+            <td>ID:</td>
+            <td><input type="text" id="txtId" disabled></td>
+        </tr>
+        <tr>
+            <td>Título:</td>
+            <td><input type="text" id="txtTitulo"></td>
+        </tr>
+        <tr>
+            <td>Diretor:</td>
+            <td><input type="text" id="txtDiretor"></td>
+        </tr>
+        <tr>
+            <td>Ano de Lançamento:</td>
+            <td><input type="number" id="txtAnoLancamento"></td>
+        </tr>
+        <tr>
+            <td>Duração (minutos):</td>
+            <td><input type="number" id="txtDuracaoMinutos"></td>
+        </tr>
+        <tr>
+            <td>Gênero:</td>
+            <td><input type="text" id="txtGenero"></td>
+        </tr>
+        <tr>
+            <td>Classificação Indicativa:</td>
+            <td><input type="text" id="txtClassificacaoIndicativa"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Salvar" onclick="salvarFilme()" id="btnSalvar">
+                <input type="button" value="Apagar" onclick="apagarFilme()" id="btnApagar">
+                <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+            </td>
+        </tr>
+    </table>
+
     <p style="font-weight:bold" id="paragrafoMensagem"></p>
-    
-    <table id="tabelaFilmes">  
-        <tr><td><input type="button" value="Novo" onclick="novoFilme()" id="btnNovo"></td> <td></td> <td></td></tr>
-        <tr> <th>ID</th> <th>Título</th> <th>Diretor</th> <th>Ano de Lançamento</th> <th>Duração</th> <th>Gênero</th> <th>Classificação</th> </tr>
+
+    <table id="tabelaFilmes">
+        <tr>
+            <td><input type="button" value="Novo" onclick="novoFilme()" id="btnNovo"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Diretor</th>
+            <th>Ano de Lançamento</th>
+            <th>Duração</th>
+            <th>Gênero</th>
+            <th>Classificação</th>
+        </tr>
         <tbody id="corpoTabelaFilmes"> </tbody>
     </table>
-    
+
     <script src="filme-rest.js"></script>
     <script>
         const tabelaFilmes = document.querySelector('#tabelaFilmes');
@@ -46,13 +82,13 @@
         const txtGenero = document.querySelector('#txtGenero');
         const txtClassificacaoIndicativa = document.querySelector('#txtClassificacaoIndicativa');
         const txtId = document.querySelector('#txtId');
-        
+
         const btnNovo = document.querySelector('#btnNovo');
         const btnSalvar = document.querySelector('#btnSalvar');
         const btnApagar = document.querySelector('#btnApagar');
         const btnCancelar = document.querySelector('#btnCancelar');
         var criandoNovoFilme = false;
-        
+
         inicializar();
 
         function inicializar() {
@@ -72,25 +108,25 @@
             txtDuracaoMinutos.disabled = true;
             txtGenero.disabled = true;
             txtClassificacaoIndicativa.disabled = true;
-            
+
             btnNovo.disabled = false;
             btnSalvar.disabled = true;
             btnApagar.disabled = true;
             btnCancelar.disabled = true;
-            
+
             tabelaFormulario.style.display = 'none';
             tabelaFilmes.style.display = 'inline';
-            
-            listarTodosFilmes();            
+
+            listarTodosFilmes();
         }
 
         function listarTodosFilmes() {
-            const errorHandler = function(error) { 
+            const errorHandler = function (error) {
                 paragrafoMensagem.textContent = "Erro ao listar filmes (código " + error.message + ")";
             }
             asyncLerFilmes(preencherTabela, errorHandler);
         }
-        
+
         function preencherTabela(filmes) {
             corpoTabela.innerHTML = "";
             var n = filmes.length;
@@ -104,11 +140,11 @@
                 let celulaDuracaoMinutos = linha.insertCell();
                 let celulaGenero = linha.insertCell();
                 let celulaClassificacao = linha.insertCell();
-                
+
                 let alink = document.createElement('a');
                 alink.textContent = f.id;
                 alink.href = "javascript:void(0)";
-                alink.onclick = function() { selecionarFilme(f.id); };
+                alink.onclick = function () { selecionarFilme(f.id); };
                 celulaId.appendChild(alink);
                 celulaTitulo.textContent = f.titulo;
                 celulaDiretor.textContent = f.diretor;
@@ -118,15 +154,15 @@
                 celulaClassificacao.textContent = f.classificacaoIndicativa;
             }
         }
-        
+
         function selecionarFilme(id) {
             criandoNovoFilme = false;
-            const errorHandler = function(error) { 
+            const errorHandler = function (error) {
                 paragrafoMensagem.textContent = "Erro ao selecionar filme (código " + error.message + ")";
             }
-            asyncLerFilmeById(id, preencherFormulario, errorHandler);                
+            asyncLerFilmeById(id, preencherFormulario, errorHandler);
         }
-            
+
         function preencherFormulario(filme) {
             paragrafoMensagem.textContent = 'Altere e salve os dados do filme, ou então apague o registro do filme.'
             txtId.value = filme.id;
@@ -136,7 +172,7 @@
             txtDuracaoMinutos.value = filme.duracaoMinutos;
             txtGenero.value = filme.genero;
             txtClassificacaoIndicativa.value = filme.classificacaoIndicativa;
-            
+
             txtId.disabled = true;
             txtTitulo.disabled = false;
             txtDiretor.disabled = false;
@@ -144,12 +180,12 @@
             txtDuracaoMinutos.disabled = false;
             txtGenero.disabled = false;
             txtClassificacaoIndicativa.disabled = false;
-            
+
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
             btnApagar.disabled = false;
-            btnCancelar.disabled = false;  
-            
+            btnCancelar.disabled = false;
+
             tabelaFormulario.style.display = 'inline';
             tabelaFilmes.style.display = 'none';
         }
@@ -157,7 +193,7 @@
         function novoFilme() {
             paragrafoMensagem.textContent = 'Preencha os dados do novo filme...';
             criandoNovoFilme = true;
-            
+
             txtId.value = '';
             txtTitulo.value = '';
             txtDiretor.value = '';
@@ -165,7 +201,7 @@
             txtDuracaoMinutos.value = '';
             txtGenero.value = '';
             txtClassificacaoIndicativa.value = '';
-            
+
             txtId.disabled = true;
             txtTitulo.disabled = false;
             txtDiretor.disabled = false;
@@ -173,16 +209,16 @@
             txtDuracaoMinutos.disabled = false;
             txtGenero.disabled = false;
             txtClassificacaoIndicativa.disabled = false;
-            
+
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
             btnApagar.disabled = true;
             btnCancelar.disabled = false;
-            
+
             tabelaFormulario.style.display = 'inline';
             tabelaFilmes.style.display = 'none';
         }
-        
+
         function salvarFilme() {
             if (criandoNovoFilme) {
                 criarFilme();
@@ -190,25 +226,26 @@
                 alterarFilme();
             }
         }
-        
+
         function criarFilme() {
             const dadosFilme = {
                 'titulo': txtTitulo.value,
                 'diretor': txtDiretor.value,
-                'anoLancamento': txtAnoLancamento.value,
+                'anoLancamento': isNaN(parseInt(txtAnoLancamento.value, 10)) ? null : parseInt(txtAnoLancamento.value, 10),
                 'duracaoMinutos': txtDuracaoMinutos.value,
                 'genero': txtGenero.value,
-                'classificacaoIndicativa': txtClassificacaoIndicativa.value
+                'classificacaoIndicativa': txtClassificacaoIndicativa.value,
+                item_type: "FILME"  // Adicionando tipo fixo
             };
-            const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = 'Erro ao criar novo filme (código ' + error.message + ')'; 
+            const errorHandler = function (error) {
+                paragrafoMensagem.textContent = 'Erro ao criar novo filme (código ' + error.message + ')';
             }
             asyncCriarFilme(dadosFilme, inicializar, errorHandler);
         }
-        
+
         function alterarFilme() {
-            const errorHandler = function(error) {
-                paragrafoMensagem.textContent = 'Erro ao alterar filme (código ' + error.message + ')'; 
+            const errorHandler = function (error) {
+                paragrafoMensagem.textContent = 'Erro ao alterar filme (código ' + error.message + ')';
             }
             const dadosFilme = {
                 'id': txtId.value,
@@ -219,22 +256,22 @@
                 'genero': txtGenero.value,
                 'classificacaoIndicativa': txtClassificacaoIndicativa.value
             };
-            asyncAlterarFilme(dadosFilme, inicializar, errorHandler);         
+            asyncAlterarFilme(dadosFilme, inicializar, errorHandler);
         }
-        
+
         function cancelarEdicao() {
             inicializar();
         }
-        
+
         function apagarFilme() {
             const id = txtId.value;
-            const errorHandler = function(error) { 
-                paragrafoMensagem.textContent = 'Erro ao apagar filme (código ' + error.message + ')'; 
-            } 
-            asyncApagarFilme(id, inicializar, errorHandler);                
+            const errorHandler = function (error) {
+                paragrafoMensagem.textContent = 'Erro ao apagar filme (código ' + error.message + ')';
+            }
+            asyncApagarFilme(id, inicializar, errorHandler);
         }
-        
-    </script>    
+
+    </script>
 </body>
 
 </html>

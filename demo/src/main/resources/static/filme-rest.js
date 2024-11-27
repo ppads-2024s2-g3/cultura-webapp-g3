@@ -1,5 +1,5 @@
 async function asyncCriarFilme(dadosFilme, proxsucesso, proxerro) {
-    const URL = `/api/filmes`;
+    const URL = '/api/filmes';
     const postRequest = {
         method: 'POST',
         body: JSON.stringify(dadosFilme),
@@ -13,7 +13,7 @@ async function asyncCriarFilme(dadosFilme, proxsucesso, proxerro) {
 }
 
 async function asyncLerFilmes(proxsucesso, proxerro) {
-    const URL = `/api/filmes`;
+    const URL = '/api/filmes';
     fetch(URL)
         .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; }) 
         .then(resposta => resposta.json())
@@ -22,7 +22,7 @@ async function asyncLerFilmes(proxsucesso, proxerro) {
 }
 
 async function asyncLerFilmeById(id, proxsucesso, proxerro) {
-    const URL = `/api/filmes/${id}`;
+    const URL = '/api/filmes/${id}';
     fetch(URL)
         .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; }) 
         .then(resposta => resposta.json())
@@ -31,7 +31,7 @@ async function asyncLerFilmeById(id, proxsucesso, proxerro) {
 }
 
 async function asyncAlterarFilme(dadosFilme, proxsucesso, proxerro) {
-    const URL = `/api/filmes/${dadosFilme.id}`;
+    const URL = '/api/filmes/${dadosFilme.id}';
     const putRequest = {
         method: 'PUT',
         body: JSON.stringify(dadosFilme),
@@ -45,7 +45,7 @@ async function asyncAlterarFilme(dadosFilme, proxsucesso, proxerro) {
 }
 
 async function asyncApagarFilme(id, proxsucesso, proxerro) {
-    const URL = `/api/filmes/${id}`;
+    const URL = '/api/filmes/${id}';
     const deleteRequest = {
         method: 'DELETE'
     };

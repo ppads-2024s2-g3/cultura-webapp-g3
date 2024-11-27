@@ -6,15 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.EqualsAndHashCode;
 
-
-
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue("desenhoAnimado")
 public class DesenhoAnimado extends ItemCultural {
 
-    @Id @GeneratedValue
-    private long id;
 
     private String nome;
     private String criador;
@@ -25,14 +21,6 @@ public class DesenhoAnimado extends ItemCultural {
 
     public DesenhoAnimado() {
         super();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getNome() {

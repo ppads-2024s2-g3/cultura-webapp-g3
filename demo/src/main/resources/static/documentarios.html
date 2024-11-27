@@ -213,7 +213,8 @@
                 'anoLancamento': txtAnoLancamento.value,
                 'duracaoMediaMinutos': txtDuracao.value,
                 'genero': txtGenero.value,
-                'tema': txtTema.value
+                'tema': txtTema.value,
+                'item_type': 'DOCUMENTARIO', // Adicionado o tipo
             };
             const errorHandler = function(error) {
                 paragrafoMensagem.textContent = 'Erro ao criar novo documentário (código ' + error.message + ')';
@@ -223,6 +224,7 @@
 
         function alterarDocumentario() {
             const dadosDocumentario = {
+                'item_type': 'DOCUMENTARIO', // Adicionado o tipo
                 'id': txtId.value,
                 'nome': txtNome.value,
                 'diretor': txtDiretor.value,

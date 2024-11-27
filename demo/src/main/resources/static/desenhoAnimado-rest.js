@@ -2,10 +2,12 @@ async function asyncCriarDesenho(dadosDesenho, proxsucesso, proxerro) {
     const URL = "/api/desenhos";
     const postRequest = {
         method: 'POST',
-        body: JSON.stringify(dadosDesenho),
+        body: JSON.stringify(dadosDesenho), // Confirma o envio do JSON
         headers: { 'Content-type': 'application/json' }
     };
     
+    console.log("Payload enviado:", postRequest.body); // Verifica o que está sendo enviado
+
     try {
         const resposta = await fetch(URL, postRequest);
         if (!resposta.ok) throw new Error(resposta.status);
