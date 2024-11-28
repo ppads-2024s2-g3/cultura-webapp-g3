@@ -207,7 +207,8 @@
                 'genero': txtGenero.value,
                 'numeroTemporadas': parseInt(txtNumeroTemporadas.value),
                 'numeroEpisodios': parseInt(txtNumeroEpisodios.value),
-                'item_type': "DESENHO_ANIMADO"
+                item_type: "desenhoAnimado"  // Adicionando tipo fixo
+                
             };
             const errorHandler = function(error) { 
                 paragrafoMensagem.textContent = 'Erro ao criar novo desenho animado (código ' + error.message + ')'; 

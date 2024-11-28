@@ -230,9 +230,7 @@
                 'anoPublicacao': parseInt(txtAnoPublicacao.value),
                 'paginas': parseInt(txtPaginas.value),
                 'genero': txtGenero.value,
-                'classificacaoIndicativa': txtClassificacaoIndicativa.value,
-                'item_type': "LIVRO"
-                
+                'classificacaoIndicativa': txtClassificacaoIndicativa.value
             };
             const errorHandler = function(error) {
                 paragrafoMensagem.textContent = 'Erro ao alterar livro (código ' + error.message + ')';
