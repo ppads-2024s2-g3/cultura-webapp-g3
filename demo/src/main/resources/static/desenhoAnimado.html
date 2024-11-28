@@ -18,7 +18,6 @@
         <tr> <td>Gênero:</td> <td><input type="text" id="txtGenero"></td> </tr> 
         <tr> <td>Número de Temporadas:</td> <td><input type="number" id="txtNumeroTemporadas"></td> </tr> 
         <tr> <td>Número de Episódios:</td> <td><input type="number" id="txtNumeroEpisodios"></td> </tr>
-        <tr> <td>Tipo:</td> <td><input type="text" id="txtItemType"></td> </tr>
         <tr><td></td><td>
             <input type="button" value="Salvar" onclick="salvarDesenho()" id="btnSalvar">
             <input type="button" value="Apagar" onclick="apagarDesenho()" id="btnApagar">
@@ -34,7 +33,7 @@
         <tbody id="corpoTabelaDesenhos"> </tbody>
     </table>
     
-    <script src="desenhosAnimados-rest.js" type="application/javascript" ></script>
+    <script src="desenhoAnimado-rest.js"></script>
     <script>
         const tabelaDesenhos = document.querySelector('#tabelaDesenhos');
         const tabelaFormulario = document.querySelector('#tabelaFormulario');
@@ -52,8 +51,6 @@
         const btnSalvar = document.querySelector('#btnSalvar');
         const btnApagar = document.querySelector('#btnApagar');
         const btnCancelar = document.querySelector('#btnCancelar');
-        const anoLancamento = txtAnoLancamento.value.trim(); // Remove espaços em branco
-        const ano = anoLancamento ? parseInt(anoLancamento) : null; // Se vazio, usa null
         var criandoNovoDesenho = false;
         
         inicializar();
@@ -140,8 +137,6 @@
             txtGenero.value = desenho.genero;
             txtNumeroTemporadas.value = desenho.numeroTemporadas;
             txtNumeroEpisodios.value = desenho.numeroEpisodios;
-            txtItemType.value = desenho.item_type; // Adicionando o preenchimento do campo item_type
-
             
             txtId.disabled = true;
             txtNome.disabled = false;
@@ -150,8 +145,7 @@
             txtGenero.disabled = false;
             txtNumeroTemporadas.disabled = false;
             txtNumeroEpisodios.disabled = false;
-            txtItemType.disabled = true; // Garantir que o campo item_type esteja habilitado
-
+            
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
             btnApagar.disabled = false;
@@ -180,7 +174,6 @@
             txtGenero.disabled = false;
             txtNumeroTemporadas.disabled = false;
             txtNumeroEpisodios.disabled = false;
-            txtItemType.disabled = true;
             
             btnNovo.disabled = true;
             btnSalvar.disabled = false;
@@ -203,7 +196,7 @@
             const dadosDesenho = {
                 'nome': txtNome.value,
                 'criador': txtCriador.value,
-                'anoLancamento': parseInt(txtAnoLancamento.value) || 0,
+                'anoLancamento': parseInt(txtAnoLancamento.value),
                 'genero': txtGenero.value,
                 'numeroTemporadas': parseInt(txtNumeroTemporadas.value),
                 'numeroEpisodios': parseInt(txtNumeroEpisodios.value),
@@ -226,8 +219,7 @@
                 'anoLancamento': parseInt(txtAnoLancamento.value),
                 'genero': txtGenero.value,
                 'numeroTemporadas': parseInt(txtNumeroTemporadas.value),
-                'numeroEpisodios': parseInt(txtNumeroEpisodios.value),
-                item_type: "DESENHOANIMADO"  // Adicionando tipo fixo
+                'numeroEpisodios': parseInt(txtNumeroEpisodios.value)
             };
             asyncAlterarDesenho(dadosDesenho, inicializar, errorHandler);        	
         }

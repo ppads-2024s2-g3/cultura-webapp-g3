@@ -67,25 +67,8 @@
     <script>
         // Função para carregar todos os Geeks do sistema
         function loadGeeks() {
-            const token = localStorage.getItem('token'); // Recupera o token do localStorage
-            if (!token) {
-                alert('Token não encontrado. Por favor, faça login novamente.');
-                window.location.replace('/html/login.html'); // Redireciona para o login
-                return;
-            }
-
-            fetch('/geeks', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` // Inclui o token no cabeçalho
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao carregar Geeks: ' + response.statusText);
-                    }
-                    return response.json();
-                })
+            fetch('/geeks')
+                .then(response => response.json())
                 .then(data => {
                     const tableBody = document.getElementById('geekTableBody');
                     tableBody.innerHTML = ''; // Limpar tabela
@@ -102,10 +85,7 @@
                         tableBody.appendChild(row);
                     });
                 })
-                .catch(error => {
-                    console.error(error);
-                    alert('Erro ao carregar Geeks.');
-                });
+                .catch(error => console.error('Erro ao carregar Geeks:', error));
         }
 
         // Função para adicionar um novo Geek
@@ -117,8 +97,7 @@
             fetch('/geeks', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ nome, email })
             })
@@ -135,18 +114,8 @@
 
         // Função para deletar um Geek pelo ID
         function deleteGeek(id) {
-            const token = localStorage.getItem('token'); // Recupera o token do localStorage
-            if (!token) {
-                alert('Token não encontrado. Por favor, faça login novamente.');
-                window.location.replace('/html/login.html'); // Redireciona para o login
-                return;
-            }
-
             fetch(`/geeks/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}` // Inclui o token no cabeçalho
-                }
+                method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
