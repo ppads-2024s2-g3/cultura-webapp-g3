@@ -9,6 +9,9 @@ import jakarta.persistence.Table;
 @Entity
 public class Serie extends ItemCultural {
 
+    @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private long id;
+
     private String titulo;
     private String descricao;
     private int anoInicio;
@@ -16,6 +19,14 @@ public class Serie extends ItemCultural {
 
     public Serie() {
         super();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitulo() {
