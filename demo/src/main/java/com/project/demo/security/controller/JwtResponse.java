@@ -1,4 +1,4 @@
-package security.controller;
+package com.project.demo.security.controller;
 
 import java.io.Serializable;
 

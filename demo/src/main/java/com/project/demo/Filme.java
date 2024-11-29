@@ -13,8 +13,6 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("filme")
 public class Filme  extends ItemCultural {
 
-    @Id @GeneratedValue
-    private long id;
     private String titulo;
     private String diretor;
     private int anoLancamento;
@@ -24,15 +22,6 @@ public class Filme  extends ItemCultural {
 
     public Filme() {
         super();
-    }
-
-    // Getters e Setters
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getTitulo() {

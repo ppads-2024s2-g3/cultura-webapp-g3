@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações</title>
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+    <style>
+        body {
+            margin: 20px;
+            padding: 0;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+    <script>
+        async function createAvaliacao() {
+            const nota = parseInt(document.getElementById('nota').value);
+            const comentario = document.getElementById('comentario').value;
+            const geekId = parseInt(document.getElementById('geekId').value);
+            const itemCulturalId = parseInt(document.getElementById('itemCulturalId').value);
+            const itemType = document.getElementById('itemType').value;
+
+            // Verificar se o token está disponível
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Token não encontrado. Por favor, faça login novamente.');
+                window.location.replace('/html/login.html'); // Redireciona para a página de login
+                return;
+            }
+
+            const data = {
+                nota: nota,
+                comentario: comentario,
+                geek: { id: geekId },
+                itemCultural: {
+                    id: itemCulturalId,
+                    item_type: itemType
+                }
+            };
+
+            const response = await fetch('/avaliacoes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Incluindo o token no cabeçalho
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Avaliação criada com sucesso!');
+                getAvaliacoes();
+            } else {
+                alert('Erro ao criar avaliação: ' + await response.text());
+            }
+        }
+
+        async function getAvaliacoes() {
+            // Verificar se o token está disponível
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Token não encontrado. Por favor, faça login novamente.');
+                window.location.replace('/html/login.html'); // Redireciona para a página de login
+                return;
+            }
+
+            const response = await fetch('/avaliacoes', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Incluindo o token no cabeçalho
+                }
+            });
+
+            const avaliacoes = await response.json();
+            const avaliacoesTable = document.getElementById('avaliacoesTable');
+            avaliacoesTable.innerHTML = '';
+
+            avaliacoes.forEach(avaliacao => {
+                const row = avaliacoesTable.insertRow();
+                row.innerHTML = `
+                    <td>${avaliacao.id}</td>
+                    <td>${avaliacao.nota}</td>
+                    <td>${avaliacao.comentario}</td>
+                    <td>${avaliacao.geek.id}</td>
+                    <td>${avaliacao.itemCultural.id}</td>
+                    <td>${avaliacao.itemCultural.item_type}</td>
+                `;
+            });
+        }
+
+        async function deleteAvaliacao() {
+            const id = document.getElementById('deleteId').value;
+
+            if (!id) {
+                alert('Por favor, forneça um ID válido.');
+                return;
+            }
+
+            // Verificar se o token está disponível
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Token não encontrado. Por favor, faça login novamente.');
+                window.location.replace('/html/login.html'); // Redireciona para a página de login
+                return;
+            }
+
+            const response = await fetch(`/avaliacoes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Incluindo o token no cabeçalho
+                }
+            });
+
+            if (response.ok) {
+                alert('Avaliação deletada com sucesso!');
+                getAvaliacoes();
+            } else {
+                alert('Erro ao deletar avaliação: ' + await response.text());
+            }
+        }
+
+        window.onload = getAvaliacoes;
+    </script>
+</head>
+
+<body>
+    <h1>Gerenciamento de Avaliações</h1>
+    <div class="container">
+
+        <h2>Criar Avaliação</h2>
+        <div class="form-group">
+            <label for="nota">Nota (0 a 10):</label>
+            <input type="number" id="nota" min="0" max="10" required>
+        </div>
+        <div class="form-group">
+            <label for="comentario">Comentário:</label>
+            <input type="text" id="comentario" required>
+        </div>
+        <div class="form-group">
+            <label for="geekId">Geek ID:</label>
+            <input type="number" id="geekId" required>
+        </div>
+        <div class="form-group">
+            <label for="itemCulturalId">Item Cultural ID:</label>
+            <input type="number" id="itemCulturalId" required>
+        </div>
+        <div class="form-group">
+            <label for="itemType">Tipo de Item Cultural:</label>
+            <select id="itemType" required>
+                <option value="LIVRO">Livro</option>
+                <option value="FILME">Filme</option>
+                <option value="SERIE">Série</option>
+            </select>
+        </div>
+        <button onclick="createAvaliacao()">Criar Avaliação</button>
+
+        <h2>Lista de Avaliações</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nota</th>
+                    <th>Comentário</th>
+                    <th>Geek ID</th>
+                    <th>Item Cultural ID</th>
+                    <th>Tipo de Item Cultural</th>
+                </tr>
+            </thead>
+            <tbody id="avaliacoesTable">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </tbody>
+        </table>
+
+        <h2>Deletar Avaliação</h2>
+        <div class="form-group">
+            <label for="deleteId">ID da Avaliação:</label>
+            <input type="number" id="deleteId" required>
+        </div>
+        <button onclick="deleteAvaliacao()">Deletar Avaliação</button>
+
+    </div>
+</body>
+
+</html>

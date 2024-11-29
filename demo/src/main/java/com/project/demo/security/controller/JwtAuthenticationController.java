@@ -1,4 +1,4 @@
-package security.controller;
+package com.project.demo.security.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.mackenzie.webapp.security.model.User;
-import br.mackenzie.webapp.security.service.JwtService;
-import br.mackenzie.webapp.security.service.UserService;
+import com.project.demo.security.model.User;
+import com.project.demo.security.service.JwtService;
+import com.project.demo.security.service.UserService;
 
 @RestController
 @CrossOrigin

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seleção de Gerenciamento</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+<body>
+    <h1>Escolha o que deseja gerenciar</h1>
+    <div>
+        <h2>Geeks</h2>
+        <button onclick="redirecionar('geeks')">Gerenciar Geeks</button>
+    </div>
+
+    <div>
+        <h2>Itens Culturais</h2>
+        <button onclick="redirecionar('series')">Gerenciar Séries</button>
+        <button onclick="redirecionar('filmes')">Gerenciar Filmes</button>
+        <button onclick="redirecionar('desenhos')">Gerenciar Desenhos Animados</button>
+        <button onclick="redirecionar('documentarios')">Gerenciar Documentários</button>
+        <button onclick="redirecionar('livros')">Gerenciar Livros</button>
+    </div>
+
+    <div>
+        <h2>Avaliações</h2>
+        <button onclick="redirecionar('avaliacoes')">Gerenciar Avaliações</button>
+    </div>
+
+    <script>
+        function redirecionar(area) {
+            switch(area) {
+                case 'geeks':
+                    window.location.replace("/html/geeks.html");
+                    break;
+                case 'series':
+                    window.location.replace("/html/series.html");
+                    break;
+                case 'filmes':
+                    window.location.replace("/html/filme.html");
+                    break;
+                case 'desenhos':
+                    window.location.replace("/html/desenhoAnimado.html");
+                    break;
+                case 'documentarios':
+                    window.location.replace("/html/documentarios.html");
+                    break;
+                case 'livros':
+                    window.location.replace("/html/livros.html");
+                    break;
+                case 'avaliacoes':
+                    window.location.replace("/html/avaliacoes.html");
+                    break;
+                default:
+                    alert("Seção inválida!");
+            }
+        }
+    </script>
+</body>
+</html>

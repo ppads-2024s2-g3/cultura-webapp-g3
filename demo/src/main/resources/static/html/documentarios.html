@@ -48,7 +48,7 @@
         <tbody id="corpoTabelaDocumentarios"> </tbody>
     </table>
 
-    <script src="documentarios-rest.js"></script>
+    <script src="documentarios-rest.js" type="application/javascript"></script>
     <script>
         const tabelaDocumentarios = document.querySelector('#tabelaDocumentarios');
         const tabelaFormulario = document.querySelector('#tabelaFormulario');
@@ -214,7 +214,7 @@
                 'duracaoMediaMinutos': txtDuracao.value,
                 'genero': txtGenero.value,
                 'tema': txtTema.value,
-                'item_type': "DOCUMENTARIO"
+                'item_type': 'DOCUMENTARIO', // Adicionado o tipo
             };
             const errorHandler = function(error) {
                 paragrafoMensagem.textContent = 'Erro ao criar novo documentário (código ' + error.message + ')';
@@ -224,6 +224,7 @@
 
         function alterarDocumentario() {
             const dadosDocumentario = {
+                'item_type': 'DOCUMENTARIO', // Adicionado o tipo
                 'id': txtId.value,
                 'nome': txtNome.value,
                 'diretor': txtDiretor.value,

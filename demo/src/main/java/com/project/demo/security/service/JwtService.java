@@ -1,4 +1,4 @@
-package security.service;
+package com.project.demo.security.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

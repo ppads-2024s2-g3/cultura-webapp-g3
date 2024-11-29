@@ -1,9 +1,9 @@
-package security.repo;
+package com.project.demo.security.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.mackenzie.webapp.security.model.User;
+import com.project.demo.security.model.User;
 
 import java.util.Optional;
 
